@@ -1,0 +1,2 @@
+include ':android-lints'
+include ':checks'
