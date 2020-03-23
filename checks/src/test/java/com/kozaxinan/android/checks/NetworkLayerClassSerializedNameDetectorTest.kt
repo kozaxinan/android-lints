@@ -5,11 +5,11 @@ import com.android.tools.lint.checks.infrastructure.TestFiles.bytes
 import com.android.tools.lint.checks.infrastructure.TestFiles.java
 import com.android.tools.lint.checks.infrastructure.TestFiles.kotlin
 import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
-import com.kozaxinan.android.checks.NetworkLayerClassImmutabilityDetector.Companion.ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE
+import com.kozaxinan.android.checks.NetworkLayerClassSerializedNameDetector.Companion.ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE
 import org.junit.Test
 
 @Suppress("UnstableApiUsage")
-internal class NetworkLayerClassImmutabilityDetectorTest {
+internal class NetworkLayerClassSerializedNameDetectorTest {
 
   private fun Any.retrofit(): TestFile.BinaryTestFile = bytes(
       "libs/retrofit-2.7.2.jar",
@@ -18,11 +18,19 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
           .readBytes()
   )
 
+  private fun Any.gson(): TestFile.BinaryTestFile = bytes(
+      "libs/gson-2.8.6.jar",
+      javaClass
+          .getResourceAsStream("/gson-2.8.6.jar")
+          .readBytes()
+  )
+
   @Test
-  fun `kotlin file with val`() {
+  fun `kotlin file with SerializedName`() {
     lint()
         .files(
             retrofit(),
+            gson(),
             kotlin(
                 """
                 package foo
@@ -40,11 +48,13 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                 """
                 package foo
                 
+                import com.google.gson.annotations.SerializedName
+                
                 data class Dto(
-                    val totalResults: Int,
-                    val totalNewResults: Int,
-                    val name: String,
-                    val bool: Boolean
+                    @SerializedName("totalResults") val totalResults: Int,
+                    @SerializedName("totalNewResults") val totalNewResults: Int,
+                    @SerializedName("name") val name: String,
+                    @SerializedName("bool") val bool: Boolean
                 ) {
                 
                   companion object {
@@ -55,92 +65,21 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                 """.trimIndent()
             )
         )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
         .run()
         .expectClean()
   }
 
   @Test
-  fun `kotlin file with immutable list`() {
+  fun `kotlin enum file SerializedName`() {
     lint()
         .files(
             retrofit(),
+            gson(),
             kotlin(
                 """
                 package foo
-                
-                import retrofit2.http.GET
-                
-                interface Api {
-                
-                  @GET("url") 
-                  fun get(): Dto
-                }
-                """.trimIndent()
-            ),
-            kotlin(
-                """
-                package foo
-                
-                data class Dto(
-                    val list: List<String>
-                )
-                """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expectClean()
-  }
-  @Test
-  fun `kotlin file with mutable list`() {
-    lint()
-        .files(
-            retrofit(),
-            kotlin(
-                """
-                package foo
-                
-                import retrofit2.http.GET
-                
-                interface Api {
-                
-                  @GET("url") 
-                  fun get(): Dto
-                }
-                """.trimIndent()
-            ),
-            kotlin(
-                """
-                package foo
-                
-                data class Dto(
-                    val list: MutableList<String>
-                )
-                """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expect(
-            """
-              src/foo/Api.kt:8: Error: Return type contains mutable class types. [list in Dto] need to be immutable. [NetworkLayerImmutableClassRule]
-                fun get(): Dto
-                    ~~~
-              1 errors, 0 warnings
-            """.trimIndent()
-        )
-  }
 
-  @Test
-  fun `kotlin enum file with val`() {
-    lint()
-        .files(
-            retrofit(),
-            kotlin(
-                """
-                package foo
-                
                 import retrofit2.http.GET
                 
                 interface Api {
@@ -153,11 +92,13 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
             kotlin(
                 """
                 package foo
+
+                import com.google.gson.annotations.SerializedName
                 
                 data class Dto(
-                    val totalResults: Int,
-                    val type: PremiumType,
-                    val name: String
+                    @SerializedName("totalResults") val totalResults: Int,
+                    @SerializedName("type") val type: PremiumType,
+                    @SerializedName("name") val name: String
                 )
                 """.trimIndent()
             ),
@@ -166,22 +107,23 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                 package foo
                 
                 enum class PremiumType {
-                  SCHUFA,
-                  ARVATO;
+                  @SerializedName("SCHUFA") SCHUFA,
+                  @SerializedName("ARVATO") ARVATO;
                 }
                 """.trimIndent()
             )
         )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
         .run()
         .expectClean()
   }
 
   @Test
-  fun `kotlin file with var`() {
+  fun `kotlin file without SerializedName`() {
     lint()
         .files(
             retrofit(),
+            gson(),
             kotlin(
                 """
                 package foo
@@ -199,32 +141,35 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                 """
                 package foo
                 
+                import com.google.gson.annotations.SerializedName
+                
                 data class Dto(
-                    val totalResults: Int,
-                    var totalNewResults: Int,
-                    val name: String
+                    @SerializedName("totalResults") val totalResults: Int,
+                    val totalNewResults: Int,
+                    @SerializedName("name") val name: String
                 )
                 """.trimIndent()
             )
         )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
         .run()
         .expect(
             """
-              src/foo/Api.kt:8: Error: Return type is not immutable. [totalNewResults in Dto] need to be final or val. [NetworkLayerImmutableClassRule]
-                fun get(): Dto
-                    ~~~
-              1 errors, 0 warnings
+            src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
+              fun get(): Dto
+                  ~~~
+            0 errors, 0 warnings
             """.trimIndent()
         )
   }
 
   @Test
-  fun `kotlin file with var from multiple interface`() {
+  fun `kotlin file without SerializedName from multiple interface`() {
     lint()
         .allowDuplicates()
         .files(
             retrofit(),
+            gson(),
             kotlin(
                 """
                 package foo
@@ -257,31 +202,32 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                 
                 class Dto(
                     val totalResults: Int,
-                    var totalNewResults: Int
+                    val totalNewResults: Int
                 )
                 """.trimIndent()
             )
         )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
         .run()
         .expect(
             """
-              src/foo/Api.kt:8: Error: Return type is not immutable. [totalNewResults in Dto] need to be final or val. [NetworkLayerImmutableClassRule]
-                fun get(): Dto
-                    ~~~
-              src/foo/Api2.kt:8: Error: Return type is not immutable. [totalNewResults in Dto] need to be final or val. [NetworkLayerImmutableClassRule]
-                fun get2(): Dto
-                    ~~~~
-              2 errors, 0 warnings
+            src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalResults, totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
+              fun get(): Dto
+                  ~~~
+            src/foo/Api2.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalResults, totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
+              fun get2(): Dto
+                  ~~~~
+            0 errors, 0 warnings
             """.trimIndent()
         )
   }
 
   @Test
-  fun `kotlin file inner dto with var`() {
+  fun `kotlin file inner dto without SerializedName`() {
     lint()
         .files(
             retrofit(),
+            gson(),
             kotlin(
                 """
                 package foo
@@ -315,23 +261,24 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                 """.trimIndent()
             )
         )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
         .run()
         .expect(
             """
-              src/foo/Api.kt:8: Error: Return type is not immutable. [innerDto in Dto, innerResults in InnerDto] need to be final or val. [NetworkLayerImmutableClassRule]
-                fun get(): Dto
-                    ~~~
-              1 errors, 0 warnings
+            src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalResults, innerDto, innerResults] fields. [NetworkLayerClassSerializedNameRule]
+              fun get(): Dto
+                  ~~~
+            0 errors, 0 warnings
             """.trimIndent()
         )
   }
 
   @Test
-  fun `kotlin file return type generic with var`() {
+  fun `kotlin file return type generic without SerializedName`() {
     lint()
         .files(
             retrofit(),
+            gson(),
             kotlin(
                 """
                 package foo
@@ -352,19 +299,19 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                 
                 class Dto(
                     val totalResults: Int,
-                    var totalNewResults: Int
+                    val totalNewResults: Int
                 )
                 """.trimIndent()
             )
         )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
         .run()
         .expect(
             """
-              src/foo/Api.kt:9: Error: Return type is not immutable. [totalNewResults in Dto] need to be final or val. [NetworkLayerImmutableClassRule]
-                fun get(): Call<List<Dto>>
-                    ~~~
-              1 errors, 0 warnings
+            src/foo/Api.kt:9: Information: Return type doesn't have @SerializedName annotation for [totalResults, totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
+              fun get(): Call<List<Dto>>
+                  ~~~
+            0 errors, 0 warnings
             """.trimIndent()
         )
   }
@@ -374,6 +321,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     lint()
         .files(
             retrofit(),
+            gson(),
             kotlin(
                 """
                 package foo
@@ -389,7 +337,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                 """.trimIndent()
             )
         )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
         .run()
         .expectClean()
   }
@@ -399,6 +347,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     lint()
         .files(
             retrofit(),
+            gson(),
             kotlin(
                 """
                 package foo
@@ -413,13 +362,13 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                 """.trimIndent()
             )
         )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
         .run()
         .expectClean()
   }
 
   @Test
-  fun `java file with final`() {
+  fun `java file with SerializedName`() {
     lint()
         .files(
             java(
@@ -439,9 +388,11 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                 """
                 package foo;
                 
+                import com.google.gson.annotations.SerializedName;
+                
                 class Dto {
-                    final int totalResults;
-                    final int totalNewResults;
+                    @SerializedName("a") final int totalResults;
+                    @SerializedName("b") final int totalNewResults;
                     
                     Dto(int totalResults, int totalNewResults) {
                       this.totalResult = totalResults;
@@ -451,7 +402,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                 """.trimIndent()
             )
         )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
         .run()
         .expectClean()
   }
@@ -474,7 +425,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                 """.trimIndent()
             )
         )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
         .run()
         .expectClean()
   }
@@ -501,13 +452,13 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                 """.trimIndent()
             )
         )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
         .run()
         .expectClean()
   }
 
   @Test
-  fun `java file without final`() {
+  fun `java file without SerializedName`() {
     lint()
         .files(
             java(
@@ -530,11 +481,14 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                 """
                 package foo;
                 
+                import com.google.gson.annotations.SerializedName;
+                
                 import java.util.ArrayList;
                 import java.util.List;
                 
                 class Dto {
-                    final int totalResults;
+                
+                    @SerializedName("a") final int totalResults;
                     int totalNewResults;
                     
                     private static final List<Dto> list = new ArrayList<>();
@@ -547,17 +501,17 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                 """.trimIndent()
             )
         )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
         .run()
         .expect(
             """
-              src/foo/Api.java:8: Error: Return type is not immutable. [totalNewResults in Dto] need to be final or val. [NetworkLayerImmutableClassRule]
-                Dto get();
-                    ~~~
-              src/foo/Api.java:11: Error: Return type is not immutable. [totalNewResults in Dto] need to be final or val. [NetworkLayerImmutableClassRule]
-                Dto get2();
-                    ~~~~
-              2 errors, 0 warnings
+            src/foo/Api.java:8: Information: Return type doesn't have @SerializedName annotation for [totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
+              Dto get();
+                  ~~~
+            src/foo/Api.java:11: Information: Return type doesn't have @SerializedName annotation for [totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
+              Dto get2();
+                  ~~~~
+            0 errors, 0 warnings
             """.trimIndent()
         )
   }

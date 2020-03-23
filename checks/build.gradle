@@ -6,12 +6,12 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
 
-  compileOnly "org.jetbrains.kotlin:kotlin-stdlib:jdk8-$kotlin_version"
-  compileOnly "com.android.tools.lint:lint-api:26.6.1"
-  compileOnly "com.android.tools.lint:lint-checks:26.6.1"
+  compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  compileOnly "com.android.tools.lint:lint-api:26.6.2"
+  compileOnly "com.android.tools.lint:lint-checks:26.6.2"
 
-  testImplementation "com.android.tools.lint:lint:26.6.1"
-  testImplementation "com.android.tools.lint:lint-tests:26.6.1"
+  testImplementation "com.android.tools.lint:lint:26.6.2"
+  testImplementation "com.android.tools.lint:lint-tests:26.6.2"
   testImplementation "junit:junit:4.13"
 }
 
