@@ -9,6 +9,7 @@ import com.android.tools.lint.detector.api.Severity.ERROR
 import com.intellij.psi.PsiModifier
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.getContainingUClass
+import org.jetbrains.uast.kotlin.KotlinUClass
 
 /**
  * Check retrotif interface methods return type for immutability.
@@ -27,24 +28,25 @@ internal class NetworkLayerClassImmutabilityDetector : RetrofitReturnTypeDetecto
       val nonFinalFields = fields.filterNot { it.hasModifierProperty(PsiModifier.FINAL) }
       if (nonFinalFields.isNotEmpty()) {
         val fieldsText = nonFinalFields.map { "${it.name} in ${it.getContainingUClass()?.name}" }
-        context.report(
-            issue = ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE,
-            scopeClass = node,
-            location = context.getNameLocation(node),
-            message = "Return type is not immutable. $fieldsText need to be final or val."
-        )
+        report(node, "Return type is not immutable. $fieldsText need to be final or val.")
       }
 
-      val nonImmutableFields = fields.filter { it.text.contains("Mutable") }
+      val nonImmutableFields = fields
+          .filter { it.getContainingUClass() is KotlinUClass }
+          .filter { it.text.contains("Mutable") }
       if (nonImmutableFields.isNotEmpty()) {
         val fieldsText = nonImmutableFields.map { "${it.name} in ${it.getContainingUClass()?.name}" }
-        context.report(
-            issue = ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE,
-            scopeClass = node,
-            location = context.getNameLocation(node),
-            message = "Return type contains mutable class types. $fieldsText need to be immutable."
-        )
+        report(node, "Return type contains mutable class types. $fieldsText need to be immutable.")
       }
+    }
+
+    private fun report(node: UMethod, message: String) {
+      context.report(
+          issue = ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE,
+          scopeClass = node,
+          location = context.getNameLocation(node),
+          message = message
+      )
     }
   }
 

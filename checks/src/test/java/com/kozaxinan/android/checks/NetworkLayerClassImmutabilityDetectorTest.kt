@@ -92,6 +92,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
         .run()
         .expectClean()
   }
+
   @Test
   fun `kotlin file with mutable list`() {
     lint()
@@ -130,6 +131,42 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
               1 errors, 0 warnings
             """.trimIndent()
         )
+  }
+
+  @Test
+  fun `java file with mutable list`() {
+    lint()
+        .files(
+            retrofit(),
+            java(
+                """
+                  package foo;
+                  
+                  import retrofit2.http.GET;
+                  
+                  interface Api {
+                  
+                    @GET("url") 
+                    Dto get();
+                  }
+                """.trimIndent()
+            ),
+            java(
+                """
+                  package foo;
+              
+                  import java.util.List;
+              
+                  class Dto {
+                  
+                    public final List<String> list;
+                  }
+                """.trimIndent()
+            )
+        )
+        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+        .run()
+        .expectClean()
   }
 
   @Test
