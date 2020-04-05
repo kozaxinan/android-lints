@@ -15,6 +15,7 @@ Classes used in network layer should use SerializedName annotation for Gson. Thi
 # Usage
 Library is published to jitpack.io
 
+```
 allprojects {
     repositories {
         ...
@@ -25,6 +26,7 @@ allprojects {
 dependencies {
     implementation 'com.github.kozaxinan:android-lints:{VERSION}'
 }
+```
 
 
 # License
