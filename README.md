@@ -1,6 +1,8 @@
 # Android lints
 Custom set of android lints rules.
 
+[![](https://jitpack.io/v/kozaxinan/android-lints.svg)](https://jitpack.io/#kozaxinan/android-lints)
+
 ### ImmutableDataClassRule - Error
 Kotlin data classes should be immutable by design. Having var in a data class is code smell. Use copy() method when instance needs to be modified.
 
@@ -9,6 +11,20 @@ Classes used in network layer should be immutable by design. This lint checks Re
 
 ### NetworkLayerClassSerializedNameRule - Information
 Classes used in network layer should use SerializedName annotation for Gson. This lint checks Retrofit interface methods' return type for SerializedName annotation. Adding annotation rule to prevents obfuscation errors.
+
+# Usage
+Library is published to jitpack.io
+
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+dependencies {
+    implementation 'com.github.kozaxinan:android-lints:{VERSION}'
+}
 
 
 # License
