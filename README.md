@@ -9,11 +9,21 @@ Kotlin data classes should be immutable by design. Having var in a data class is
 ### NetworkLayerImmutableClassRule - Warning
 Classes used in network layer should be immutable by design. This lint checks Retrofit interface methods' return type for immutability. Java classes need to have final fields and kotlin data classes needs to have only var fields.
 
+If you want to use this rule, please configure you lint.xml.
+```
+<issue id="NetworkLayerImmutableClassRule" severity="error" />
+```
+
 ### NetworkLayerClassSerializedNameRule - Information
-Classes used in network layer should use SerializedName annotation for Gson. This lint checks Retrofit interface methods' return type for SerializedName annotation. Adding annotation rule to prevents obfuscation errors.
+Classes used in network layer should use SerializedName annotation for Gson. This lint checks Retrofit interface methods' return type for SerializedName annotation. Adding annotation rule to prevents obfuscation errors. If you dont use Gson for Retrofit, this check is useless. That is why it is `infromation` level. 
+
+If you want to use this rule, please configure you lint.xml. 
+```
+<issue id="NetworkLayerClassSerializedNameRule" severity="error" />
+```
 
 # Usage
-Library is published to jitpack.io
+Library is published to jitpack.io. After adding implementation to your module, lint will include new rules. 
 
 ```
 allprojects {
@@ -24,7 +34,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.kozaxinan:android-lints:{VERSION}'
+    implementation 'com.github.kozaxinan:android-lints:0.1.1'
 }
 ```
 
