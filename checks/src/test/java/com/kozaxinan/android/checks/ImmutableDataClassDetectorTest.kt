@@ -58,13 +58,10 @@ internal class ImmutableDataClassDetectorTest {
         .run()
         .expect(
             """
-              src/foo/Dto.kt:3: Warning: name is var. name needs to be val. [ImmutableDataClassRule]
+              src/foo/Dto.kt:3: Warning: [totalNewResults, name] are var. [totalNewResults, name] need to be val. [ImmutableDataClassRule]
               data class Dto(
                          ~~~
-              src/foo/Dto.kt:3: Warning: totalNewResults is var. totalNewResults needs to be val. [ImmutableDataClassRule]
-              data class Dto(
-                         ~~~
-              0 errors, 2 warnings
+              0 errors, 1 warnings
             """.trimIndent()
         )
   }
@@ -88,7 +85,7 @@ internal class ImmutableDataClassDetectorTest {
         .run()
         .expect(
             """
-              src/foo/Dto.kt:3: Warning: Return type of list is not immutable. list needs to be immutable class. [ImmutableDataClassRule]
+              src/foo/Dto.kt:3: Warning: Return type of [list] are not immutable. [list] need to be immutable class. [ImmutableDataClassRule]
               data class Dto(
                          ~~~
               0 errors, 1 warnings
@@ -135,7 +132,7 @@ internal class ImmutableDataClassDetectorTest {
         .run()
         .expect(
             """
-              src/foo/Dto.kt:3: Warning: Return type of map is not immutable. map needs to be immutable class. [ImmutableDataClassRule]
+              src/foo/Dto.kt:3: Warning: Return type of [map] are not immutable. [map] need to be immutable class. [ImmutableDataClassRule]
               data class Dto(
                          ~~~
               0 errors, 1 warnings
@@ -226,7 +223,7 @@ internal class ImmutableDataClassDetectorTest {
         .run()
         .expect(
             """
-              src/foo/Dto.kt:3: Warning: totalResults is var. totalResults needs to be val. [ImmutableDataClassRule]
+              src/foo/Dto.kt:3: Warning: [totalResults] are var. [totalResults] need to be val. [ImmutableDataClassRule]
               class Dto(var totalResults: Int) {
                     ~~~
               0 errors, 1 warnings

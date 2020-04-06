@@ -34,21 +34,28 @@ internal class ImmutableDataClassDetector : Detector(), UastScanner {
           .containsAll(listOf("equals", "hashCode"))
 
       if (containsEqualHashCode) {
-        node
+        val fields = node
             .allFields
             .filterIsInstance<KtLightField>()
-            .forEach { checkField(node, it) }
+
+        checkFields(node, fields)
       }
     }
 
-    private fun checkField(node: KotlinUClass, field: KtLightField) {
+    private fun checkFields(node: KotlinUClass, fields: List<KtLightField>) {
 
-      if (!field.hasModifierProperty(PsiModifier.FINAL)) {
-        report(node, "${field.name} is var. ${field.name} needs to be val.")
+      val nonFinalFieldNames = fields
+          .filterNot { it.hasModifierProperty(PsiModifier.FINAL) }
+          .map { it.name }
+      if (nonFinalFieldNames.isNotEmpty()) {
+        report(node, "$nonFinalFieldNames are var. $nonFinalFieldNames need to be val.")
       }
 
-      if (field.text.contains("Mutable")) {
-        report(node, "Return type of ${field.name} is not immutable. ${field.name} needs to be immutable class.")
+      val mutableFieldNames = fields
+          .filter { it.text.contains("Mutable") }
+          .map { it.name }
+      if (mutableFieldNames.isNotEmpty()) {
+        report(node, "Return type of $mutableFieldNames are not immutable. $mutableFieldNames need to be immutable class.")
       }
     }
 
