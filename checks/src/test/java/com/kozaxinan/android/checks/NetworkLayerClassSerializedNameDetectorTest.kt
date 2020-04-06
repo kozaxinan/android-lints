@@ -70,8 +70,11 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
         .expectClean()
   }
 
+  /**
+   * Annotation check for enum is not supported initially.
+   */
   @Test
-  fun `kotlin enum file SerializedName`() {
+  fun `kotlin enum file without SerializedName`() {
     lint()
         .files(
             retrofit(),
@@ -106,9 +109,9 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                 """
                 package foo
                 
-                enum class PremiumType {
-                  @SerializedName("SCHUFA") SCHUFA,
-                  @SerializedName("ARVATO") ARVATO;
+                enum class PremiumType(val id: Int) {
+                  @SerializedName("SCHUFA") SCHUFA(1),
+                  ARVATO(2);
                 }
                 """.trimIndent()
             )

@@ -22,10 +22,17 @@ internal class NetworkLayerClassSerializedNameDetector : RetrofitReturnTypeDetec
 
     override fun visitMethod(node: UMethod) {
       val nonFinalFields = findAllFieldsOf(node)
+          .filter { it.containingClass?.isEnum == false }
           .filterNot(::hasSerializedNameAnnotation)
+          .map { it.name }
 
       if (nonFinalFields.isNotEmpty()) {
-        reportIfNotFinal(nonFinalFields, node)
+        context.report(
+            issue = ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE,
+            scopeClass = node,
+            location = context.getNameLocation(node),
+            message = "Return type doesn't have @SerializedName annotation for $nonFinalFields fields."
+        )
       }
     }
 
@@ -35,16 +42,6 @@ internal class NetworkLayerClassSerializedNameDetector : RetrofitReturnTypeDetec
           .getAllAnnotations(field as UAnnotated, true)
           .mapNotNull { uAnnotation -> uAnnotation.qualifiedName }
           .any { it.endsWith("SerializedName") }
-    }
-
-    private fun reportIfNotFinal(fields: List<UField>, method: UMethod) {
-      val fieldsText = fields.map { it.name }
-      context.report(
-          issue = ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE,
-          scopeClass = method,
-          location = context.getNameLocation(method),
-          message = "Return type doesn't have @SerializedName annotation for $fieldsText fields."
-      )
     }
   }
 
