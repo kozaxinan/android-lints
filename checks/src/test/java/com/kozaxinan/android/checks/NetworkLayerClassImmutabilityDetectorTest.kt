@@ -61,6 +61,86 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
   }
 
   @Test
+  fun `kotlin file with Completable`() {
+    lint()
+        .files(
+            retrofit(),
+            kotlin(
+                """
+                package foo
+                
+                import io.reactivex.Completable
+                import retrofit2.http.GET
+                
+                interface Api {
+                
+                  @GET("url") 
+                  fun get(): Completable
+                }
+                """.trimIndent()
+            )
+        )
+        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+        .run()
+        .expectClean()
+  }
+
+  @Test
+  fun `kotlin file with val and Parcelable`() {
+    lint()
+        .files(
+            retrofit(),
+            kotlin(
+                """
+                package foo
+                
+                import retrofit2.http.GET
+                
+                interface Api {
+                
+                  @GET("url") 
+                  fun get(): Dto
+                }
+                """.trimIndent()
+            ),
+            kotlin(
+                """
+                package foo
+                
+                data class Dto(
+                    val totalResults: Int
+                ) : Parcelable {
+                
+                  constructor(parcel: Parcel) : this(parcel.readInt()) {
+                  }
+                
+                  override fun writeToParcel(parcel: Parcel, flags: Int) {
+                    parcel.writeInt(totalResults)
+                  }
+                
+                  override fun describeContents(): Int {
+                    return 0
+                  }
+                
+                  companion object CREATOR : Parcelable.Creator<Dto> {
+                    override fun createFromParcel(parcel: Parcel): Dto {
+                      return Dto(parcel)
+                    }
+                
+                    override fun newArray(size: Int): Array<Dto?> {
+                      return arrayOfNulls(size)
+                    }
+                  }
+                }
+                """.trimIndent()
+            )
+        )
+        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+        .run()
+        .expectClean()
+  }
+
+  @Test
   fun `kotlin file with immutable list`() {
     lint()
         .files(

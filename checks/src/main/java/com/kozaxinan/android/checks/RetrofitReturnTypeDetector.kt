@@ -85,7 +85,8 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
       val actualReturnType = findGenericClassType(typeRef)
       val typeClass = actualReturnType
           .resolve()
-          .toUElement() as UClass
+          .toUElement() as? UClass
+          ?: return emptyList()
 
       val innerFields: List<UField> = typeClass
           .fields
