@@ -34,7 +34,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.kozaxinan:android-lints:0.1.2'
+    implementation 'com.github.kozaxinan:android-lints:0.2'
 }
 ```
 
