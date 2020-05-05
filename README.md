@@ -25,6 +25,8 @@ If you want to use this rule, please configure you lint.xml.
 # Usage
 Library is published to jitpack.io. After adding implementation to your module, lint will include new rules. 
 
+[![](https://jitpack.io/v/kozaxinan/android-lints.svg)](https://jitpack.io/#kozaxinan/android-lints)
+
 ```
 allprojects {
     repositories {
@@ -34,10 +36,9 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.kozaxinan:android-lints:0.2'
+    implementation 'com.github.kozaxinan:android-lints:<UseLatestVersion>'
 }
 ```
-
 
 # License
 
