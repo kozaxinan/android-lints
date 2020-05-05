@@ -22,7 +22,7 @@ internal class NetworkLayerClassSerializedNameDetector : RetrofitReturnTypeDetec
 
     override fun visitMethod(node: UMethod) {
       val nonFinalFields = findAllFieldsOf(node)
-          .filter { it.containingClass?.isEnum == false }
+          .filterNot { !it.isStatic && it.containingClass?.isEnum == true }
           .filterNot(::hasSerializedNameAnnotation)
           .map { it.name }
 

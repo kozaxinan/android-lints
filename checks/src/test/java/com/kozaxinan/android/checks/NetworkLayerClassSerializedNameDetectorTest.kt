@@ -70,9 +70,6 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
         .expectClean()
   }
 
-  /**
-   * Annotation check for enum is not supported initially.
-   */
   @Test
   fun `kotlin enum file without SerializedName`() {
     lint()
@@ -99,9 +96,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                 import com.google.gson.annotations.SerializedName
                 
                 data class Dto(
-                    @SerializedName("totalResults") val totalResults: Int,
-                    @SerializedName("type") val type: PremiumType,
-                    @SerializedName("name") val name: String
+                    @SerializedName("type") val type: PremiumType
                 )
                 """.trimIndent()
             ),
@@ -109,7 +104,66 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                 """
                 package foo
                 
+                import com.google.gson.annotations.SerializedName
+
+                enum class PremiumType {
+                
+                  @SerializedName("SCHUFA") SCHUFA,
+                  ARVATO;
+                }
+                """.trimIndent()
+            )
+        )
+        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
+        .run()
+        .expect(
+            """
+              src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [ARVATO] fields. [NetworkLayerClassSerializedNameRule]
+                fun get(): Dto
+                    ~~~
+              0 errors, 0 warnings
+            """.trimIndent()
+        )
+  }
+
+  @Test
+  fun `kotlin enum with fields file without SerializedName`() {
+    lint()
+        .files(
+            retrofit(),
+            gson(),
+            kotlin(
+                """
+                package foo
+
+                import retrofit2.http.GET
+                
+                interface Api {
+                
+                  @GET("url") 
+                  fun get(): Dto
+                }
+                """.trimIndent()
+            ),
+            kotlin(
+                """
+                package foo
+
+                import com.google.gson.annotations.SerializedName
+                
+                data class Dto(
+                    @SerializedName("type") val type: PremiumType
+                )
+                """.trimIndent()
+            ),
+            kotlin(
+                """
+                package foo
+                
+                import com.google.gson.annotations.SerializedName
+
                 enum class PremiumType(val id: Int) {
+                
                   @SerializedName("SCHUFA") SCHUFA(1),
                   ARVATO(2);
                 }
@@ -118,7 +172,14 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
         )
         .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
         .run()
-        .expectClean()
+        .expect(
+            """
+              src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [ARVATO] fields. [NetworkLayerClassSerializedNameRule]
+                fun get(): Dto
+                    ~~~
+              0 errors, 0 warnings
+            """.trimIndent()
+        )
   }
 
   @Test

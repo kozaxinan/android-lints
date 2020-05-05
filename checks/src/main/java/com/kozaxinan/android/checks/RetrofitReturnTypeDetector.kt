@@ -5,6 +5,8 @@ import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Detector.UastScanner
 import com.android.tools.lint.detector.api.JavaContext
 import com.intellij.psi.PsiClassType
+import com.intellij.psi.PsiEnumConstant
+import com.intellij.psi.PsiPrimitiveType
 import com.intellij.psi.PsiSubstitutor
 import com.intellij.psi.PsiWildcardType
 import com.intellij.psi.impl.source.PsiClassReferenceType
@@ -94,13 +96,15 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
 
       val innerFields: List<UField> = typeClass
           .fields
-          .filterNot { it.isStatic }
+          .filterNot { it.isStatic && it !is PsiEnumConstant }
 
-      return innerFields + innerFields
-          .map { it.type }
-          .filterIsInstance<PsiClassReferenceType>()
-          .map(::findAllInnerFields)
-          .flatten()
+      return innerFields +
+          innerFields
+              .filterNot { it.isStatic }
+              .map { it.type }
+              .filterIsInstance<PsiClassType>()
+              .map(::findAllInnerFields)
+              .flatten()
     }
 
     private fun findGenericClassType(returnType: PsiClassType): PsiClassType {
