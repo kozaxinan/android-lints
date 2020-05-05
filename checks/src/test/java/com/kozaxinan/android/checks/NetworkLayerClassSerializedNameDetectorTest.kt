@@ -11,14 +11,14 @@ import org.junit.Test
 @Suppress("UnstableApiUsage")
 internal class NetworkLayerClassSerializedNameDetectorTest {
 
-  private fun Any.retrofit(): TestFile.BinaryTestFile = bytes(
+  private fun retrofit(): TestFile.BinaryTestFile = bytes(
       "libs/retrofit-2.7.2.jar",
       javaClass
           .getResourceAsStream("/retrofit-2.7.2.jar")
           .readBytes()
   )
 
-  private fun Any.gson(): TestFile.BinaryTestFile = bytes(
+  private fun gson(): TestFile.BinaryTestFile = bytes(
       "libs/gson-2.8.6.jar",
       javaClass
           .getResourceAsStream("/gson-2.8.6.jar")
@@ -133,9 +133,9 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                 
                 import retrofit2.http.GET
                 
-                interface Api {
+                internal interface Api {
                 
-                  @GET("url") 
+                  @GET("url")
                   fun get(): Dto
                 }
                 """.trimIndent()
@@ -146,7 +146,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                 
                 import com.google.gson.annotations.SerializedName
                 
-                data class Dto(
+                internal data class Dto(
                     @SerializedName("totalResults") val totalResults: Int,
                     val totalNewResults: Int,
                     @SerializedName("name") val name: String
@@ -162,6 +162,51 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
               fun get(): Dto
                   ~~~
             0 errors, 0 warnings
+            """.trimIndent()
+        )
+  }
+
+  @Test
+  fun `kotlin file without SerializedName for suspend method`() {
+    lint()
+        .files(
+            retrofit(),
+            gson(),
+            kotlin(
+                """
+                package foo
+                
+                import retrofit2.http.GET
+                
+                internal interface Api {
+                
+                  @GET("url")
+                  suspend fun get(some:String, iasda: Int): Dto
+                }
+                """.trimIndent()
+            ),
+            kotlin(
+                """
+                package foo
+                
+                import com.google.gson.annotations.SerializedName
+                
+                internal data class Dto(
+                    @SerializedName("totalResults") val totalResults: Int,
+                    val totalNewResults: Int,
+                    @SerializedName("name") val name: String
+                )
+                """.trimIndent()
+            )
+        )
+        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
+        .run()
+        .expect(
+            """
+              src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
+                suspend fun get(some:String, iasda: Int): Dto
+                            ~~~
+              0 errors, 0 warnings
             """.trimIndent()
         )
   }

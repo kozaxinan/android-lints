@@ -4,9 +4,13 @@ import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Detector.UastScanner
 import com.android.tools.lint.detector.api.JavaContext
+import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiSubstitutor
+import com.intellij.psi.PsiWildcardType
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.kozaxinan.android.checks.RetrofitReturnTypeDetector.Visitor
+import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.uast.UAnnotated
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UField
@@ -59,17 +63,17 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
      * Empty list if method doesn't belong to retrofit interface or method doesn't have valid return type.
      */
     fun findAllFieldsOf(node: UMethod): List<UField> {
-      if (node.containingClass?.isInterface == true && hasRetrofitAnnotation(node)) {
-        val returnType = node.returnType
-        if (returnType is PsiClassReferenceType && returnType.isNotUnitOrVoid()) {
-          return findAllInnerFields(returnType)
-        }
-      }
+      if (node.containingClass?.isInterface != true || !hasRetrofitAnnotation(node)) return emptyList()
 
-      return emptyList()
+      val returnType = node.returnType
+      return when {
+        node.isSuspend() -> findAllInnerFields(node.parameters.last().type as PsiClassType)
+        returnType is PsiClassType && returnType.isNotUnitOrVoid() -> findAllInnerFields(returnType)
+        else -> emptyList()
+      }
     }
 
-    private fun PsiClassReferenceType.isNotUnitOrVoid() =
+    private fun PsiClassType.isNotUnitOrVoid() =
         !canonicalText.contains("Unit") && !canonicalText.contains("Void")
 
     private fun hasRetrofitAnnotation(method: UMethod): Boolean {
@@ -81,7 +85,7 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
           .isNotEmpty()
     }
 
-    private fun findAllInnerFields(typeRef: PsiClassReferenceType): List<UField> {
+    private fun findAllInnerFields(typeRef: PsiClassType): List<UField> {
       val actualReturnType = findGenericClassType(typeRef)
       val typeClass = actualReturnType
           .resolve()
@@ -99,15 +103,24 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
           .flatten()
     }
 
-    private fun findGenericClassType(returnType: PsiClassReferenceType): PsiClassReferenceType {
+    private fun findGenericClassType(returnType: PsiClassType): PsiClassType {
       val substitutor = returnType
           .resolveGenerics()
           .substitutor
       return if (substitutor == PsiSubstitutor.EMPTY) {
         returnType
       } else {
-        findGenericClassType(substitutor.substitutionMap.values.first() as PsiClassReferenceType)
+        when (val psiType = substitutor.substitutionMap.values.first()) {
+          is PsiClassReferenceType -> findGenericClassType(psiType)
+          is PsiWildcardType -> findGenericClassType(psiType.superBound as PsiClassType)
+          else -> returnType
+        }
       }
+    }
+
+    private fun UMethod.isSuspend(): Boolean {
+      val modifiers = modifierList as? KtLightModifierList<*>
+      return modifiers?.kotlinOrigin?.hasModifier(KtTokens.SUSPEND_KEYWORD) ?: false
     }
   }
 }
