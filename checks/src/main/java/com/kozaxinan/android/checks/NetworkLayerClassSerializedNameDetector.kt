@@ -41,7 +41,7 @@ internal class NetworkLayerClassSerializedNameDetector : RetrofitReturnTypeDetec
           .evaluator
           .getAllAnnotations(field as UAnnotated, true)
           .mapNotNull { uAnnotation -> uAnnotation.qualifiedName }
-          .any { it.endsWith("Json") }
+          .any { it.endsWith("SerializedName") }
     }
   }
 

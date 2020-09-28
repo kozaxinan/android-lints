@@ -30,7 +30,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     lint()
         .files(
             retrofit(),
-            annotation(),
+            gson(),
             kotlin(
                 """
                 package foo
@@ -48,13 +48,13 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                 """
                 package foo
                 
-                import com.squareup.moshi.Json
+                import com.google.gson.annotations.SerializedName
                 
                 data class Dto(
-                    @Json("totalResults") val totalResults: Int,
-                    @Json("totalNewResults") val totalNewResults: Int,
-                    @Json("name") val name: String,
-                    @Json("bool") val bool: Boolean
+                    @SerializedName("totalResults") val totalResults: Int,
+                    @SerializedName("totalNewResults") val totalNewResults: Int,
+                    @SerializedName("name") val name: String,
+                    @SerializedName("bool") val bool: Boolean
                 ) {
                 
                   companion object {
@@ -68,27 +68,6 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
         .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
         .run()
         .expectClean()
-  }
-
-  private fun annotation(): TestFile {
-    return java(
-        """
-          package com.squareup.moshi;
-
-          import java.lang.annotation.Documented;
-          import java.lang.annotation.ElementType;
-          import java.lang.annotation.Retention;
-          import java.lang.annotation.RetentionPolicy;
-          import java.lang.annotation.Target;
-
-          @Documented
-          @Retention(RetentionPolicy.RUNTIME)
-          @Target({ElementType.FIELD, ElementType.METHOD})
-          public @interface Json {
-            String name();
-          }
-        """.trimIndent()
-    )
   }
 
   @Test

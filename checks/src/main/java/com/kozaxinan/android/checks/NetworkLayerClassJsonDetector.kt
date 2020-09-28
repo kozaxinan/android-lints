@@ -12,7 +12,7 @@ import org.jetbrains.uast.UField
 import org.jetbrains.uast.UMethod
 
 /**
- * Check retrotif interface methods return type for SerializedName annotation.
+ * Check retrofit interface methods return type for JsonName and Moshi's Json/JsonClass annotation.
  */
 @Suppress("UnstableApiUsage")
 internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
