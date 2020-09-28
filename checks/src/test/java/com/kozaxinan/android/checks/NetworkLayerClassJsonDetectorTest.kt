@@ -49,10 +49,8 @@ internal class NetworkLayerClassJsonDetectorTest {
                 """
                 package foo
                 
-                import import com.squareup.moshi.JsonClass
-                import import com.squareup.moshi.Json
+                import com.squareup.moshi.Json
                 
-                @JsonClass(generateAdapter = true)
                 data class Dto(
                     @Json(name = "totalResults") val totalResults: Int,
                     @Json(name = "totalNewResults") val totalNewResults: Int,

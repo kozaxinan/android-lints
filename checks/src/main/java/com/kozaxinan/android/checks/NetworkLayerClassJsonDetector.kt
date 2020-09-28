@@ -33,7 +33,7 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
             issue = ISSUE_NETWORK_LAYER_CLASS_JSON_RULE,
             scopeClass = node,
             location = context.getNameLocation(node),
-            message = "Return type doesn't have @SerializedName annotation for $nonFinalFields fields."
+            message = "Return type doesn't have @Json annotation for $nonFinalFields fields."
         )
       }
 
