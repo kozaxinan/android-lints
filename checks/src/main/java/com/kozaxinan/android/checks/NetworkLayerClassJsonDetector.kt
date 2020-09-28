@@ -23,23 +23,30 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
 
     override fun visitMethod(node: UMethod) {
       val allFields = findAllFieldsOf(node)
-          .filterNot { !it.isStatic && it.containingClass?.isEnum == true }
-          .filterNot(::hasJsonNameAnnotation)
-      val nonFinalFields = allFields
-          .map { it.name }
 
-      if (nonFinalFields.isNotEmpty()) {
+      val checkedFields = allFields.filterNot(::hasJsonNameAnnotation)
+          .map { it.name }
+      if (checkedFields.isNotEmpty()) {
         context.report(
             issue = ISSUE_NETWORK_LAYER_CLASS_JSON_RULE,
             scopeClass = node,
             location = context.getNameLocation(node),
-            message = "Return type doesn't have @Json annotation for $nonFinalFields fields."
+            message = "Return type doesn't have @Json annotation for $checkedFields fields."
         )
       }
 
-//      allFields.mapNotNull { it.containingClass }
-//          .toSet()
-//          .filterNot(::hasJsonClassAnnotation)
+      val checkedClasses = allFields.mapNotNull { it.containingClass }
+          .toSet()
+          .filterNot(::hasJsonClassAnnotation)
+
+      if (checkedClasses.isNotEmpty()) {
+        context.report(
+            issue = ISSUE_NETWORK_LAYER_CLASS_JSON_CLASS_RULE,
+            scopeClass = node,
+            location = context.getNameLocation(node),
+            message = "Return type doesn't have @JsonClass annotation for $checkedClasses classes."
+        )
+      }
     }
 
     private fun hasJsonNameAnnotation(field: UField): Boolean {
@@ -51,11 +58,9 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
     }
 
     private fun hasJsonClassAnnotation(clazz: PsiClass): Boolean {
-      return context
-          .evaluator
-          .getAllAnnotations(clazz as UAnnotated, true)
+      return clazz.annotations
           .mapNotNull { uAnnotation -> uAnnotation.qualifiedName }
-          .any { it.endsWith("Json") }
+          .any { it.endsWith("JsonClass") }
     }
   }
 
@@ -65,6 +70,15 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
         id = "NetworkLayerClassJsonRule",
         briefDescription = "Json annotated network layer class",
         explanation = "Data classes used in network layer should use Json annotation for Moshi. Adding annotation prevents obfuscation errors.",
+        category = CORRECTNESS,
+        priority = 5,
+        severity = INFORMATIONAL,
+        implementation = Implementation(NetworkLayerClassJsonDetector::class.java, Scope.JAVA_FILE_SCOPE)
+    )
+    val ISSUE_NETWORK_LAYER_CLASS_JSON_CLASS_RULE: Issue = Issue.create(
+        id = "NetworkLayerClassJsonClassRule",
+        briefDescription = "Json annotated network layer class",
+        explanation = "Data classes used in network layer should use JsonClass annotation for Moshi. Adding annotation prevents obfuscation errors.",
         category = CORRECTNESS,
         priority = 5,
         severity = INFORMATIONAL,
