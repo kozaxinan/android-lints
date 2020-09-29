@@ -1,4 +1,4 @@
-name: connectedCheck
+name: Build Check
 
 on:
   push:
