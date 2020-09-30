@@ -15,11 +15,27 @@ If you want to use this rule, please configure you lint.xml.
 ```
 
 ### NetworkLayerClassSerializedNameRule - Information
-Classes used in network layer should use SerializedName annotation for Gson. This lint checks Retrofit interface methods' return type for SerializedName annotation. Adding annotation rule to prevents obfuscation errors. If you dont use Gson for Retrofit, this check is useless. That is why it is `infromation` level. 
+Classes used in network layer with Gson should use SerializedName annotation. This lint checks Retrofit interface methods' return type for SerializedName annotation. Adding annotation rule to prevent obfuscation errors. If you don't use Gson for Retrofit, this check is useless. That is why it is `infromation` level. 
 
 If you want to use this rule, please configure you lint.xml. 
 ```
 <issue id="NetworkLayerClassSerializedNameRule" severity="error" />
+```
+
+### NetworkLayerClassJsonRule - Information
+Classes used in network layer with Moshi should use Json annotation. This lint checks Retrofit interface methods' return type for Json annotation. Adding annotation rule to prevent obfuscation errors. If you don't use Moshi for Retrofit, this check is useless. That is why it is `infromation` level. 
+
+If you want to use this rule, please configure you lint.xml. 
+```
+<issue id="NetworkLayerClassJsonRule" severity="error" />
+```
+
+### NetworkLayerClassJsonClassRule - Information
+Classes used in network layer with Moshi should use JsonClass annotation to generate the adaptor class. This lint checks Retrofit interface methods' return type for JsonClass annotation. If you don't use Moshi for Retrofit, this check is useless. That is why it is `infromation` level. 
+
+If you want to use this rule, please configure you lint.xml. 
+```
+<issue id="NetworkLayerClassJsonRule" severity="error" />
 ```
 
 # Usage
