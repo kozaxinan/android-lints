@@ -34,10 +34,10 @@ internal class NetworkLayerClassJsonDetectorTest {
                 
                 import retrofit2.http.GET
                 
-                interface Api {
+                internal interface Api {
                 
                   @GET("url") 
-                  fun get(): Dto
+                  suspend fun get(): Dto
                 }
                 """.trimIndent()
             ),
@@ -51,7 +51,9 @@ internal class NetworkLayerClassJsonDetectorTest {
                 @JsonClass(generateAdapter = true)
                 data class Dto(
                     @Json(name = "totalResults") val totalResults: Int,
-                    @Json(name = "totalNewResults") val totalNewResults: Int,
+                    @Json(name = "totalNewResults") 
+                    @Deprecated
+                    val totalNewResults: Int,
                     @Json(name = "name") val name: String,
                     @Json(name = "bool") val bool: Boolean
                 ) {
@@ -642,7 +644,6 @@ internal class NetworkLayerClassJsonDetectorTest {
 
           @Retention(RUNTIME)
           @Documented
-          @Target({ElementType.FIELD})
           public @interface Json {
             String name();
           }

@@ -7,9 +7,9 @@ import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity.INFORMATIONAL
 import com.intellij.psi.PsiClass
-import org.jetbrains.uast.UAnnotated
 import org.jetbrains.uast.UField
 import org.jetbrains.uast.UMethod
+import javax.annotation.concurrent.NotThreadSafe
 
 /**
  * Check retrofit interface methods return type for JsonName and Moshi's Json/JsonClass annotation.
@@ -49,13 +49,7 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
       }
     }
 
-    private fun hasJsonNameAnnotation(field: UField): Boolean {
-      return context
-          .evaluator
-          .getAllAnnotations(field as UAnnotated, true)
-          .mapNotNull { uAnnotation -> uAnnotation.qualifiedName }
-          .any { it.endsWith("Json") }
-    }
+    private fun hasJsonNameAnnotation(field: UField): Boolean = field.text.contains("@Json")
 
     private fun hasJsonClassAnnotation(clazz: PsiClass): Boolean {
       return clazz.annotations
