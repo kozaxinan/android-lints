@@ -6,6 +6,7 @@ import com.android.tools.lint.detector.api.Issue
 import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity.INFORMATIONAL
+import com.intellij.lang.jvm.JvmParameter
 import com.intellij.psi.PsiClass
 import org.jetbrains.uast.UAnnotated
 import org.jetbrains.uast.UField
@@ -22,10 +23,29 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
   class NetworkLayerDtoFieldVisitor(private val context: JavaContext) : Visitor(context) {
 
     override fun visitMethod(node: UMethod) {
-      val allFields = findAllFieldsOf(node).filterNot { !it.isStatic && it.containingClass?.isEnum == true }
+      val allFields: List<UField> = findAllFieldsOf(node).filterNot { !it.isStatic && it.containingClass?.isEnum == true }
 
-      val checkedFields = allFields.filterNot(::hasJsonNameAnnotation)
-          .map { it.name }
+      val classes = allFields
+          .mapNotNull { it.containingClass }
+          .toSet()
+
+      val constructorParamsWithJson: MutableList<String> = mutableListOf()
+
+      val constructorParameter: List<JvmParameter> = classes
+          .map { it.constructors.first().parameters }
+          .fold(mutableListOf(), { acc, arrayOfJvmParameters -> acc.apply { addAll(arrayOfJvmParameters) } })
+
+      constructorParameter.forEach { parameter ->
+          val name = parameter.name
+          if (name != null && parameter.annotations.any { annotation -> annotation.qualifiedName?.endsWith("Json") == true }) {
+            constructorParamsWithJson.add(name)
+          }
+      }
+
+      val checkedFields = allFields
+          .filterNot(::hasJsonNameAnnotation)
+          .map { it.name } - constructorParamsWithJson
+
       if (checkedFields.isNotEmpty()) {
         context.report(
             issue = ISSUE_NETWORK_LAYER_CLASS_JSON_RULE,
@@ -35,9 +55,7 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
         )
       }
 
-      val checkedClasses = allFields.mapNotNull { it.containingClass }
-          .toSet()
-          .filterNot(::hasJsonClassAnnotation)
+      val checkedClasses = classes.filterNot(::hasJsonClassAnnotation)
 
       if (checkedClasses.isNotEmpty()) {
         context.report(

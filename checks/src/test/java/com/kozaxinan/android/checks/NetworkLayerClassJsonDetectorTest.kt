@@ -49,18 +49,22 @@ internal class NetworkLayerClassJsonDetectorTest {
                 import com.squareup.moshi.JsonClass
                 
                 @JsonClass(generateAdapter = true)
-                data class Dto(
+                data class Dto constructor(
                     @Json(name = "totalResults") val totalResults: Int,
-                    @Json(name = "totalNewResults") 
-                    @Deprecated
+                    @Json(name = "totalNewResults") @Deprecated
                     val totalNewResults: Int,
                     @Json(name = "name") val name: String,
-                    @Json(name = "bool") val bool: Boolean
+                    @Json(name = "bool") val bools: List<Boolean>?
                 ) {
                 
                   companion object {
 
                     val EMPTY = Dto(0, 0, "", false)
+                    
+                    val mapping: Map<String, String> = mapOf(
+                      "x" to "x",
+                      "y" to "y"
+                    )
                   }
                 }
                 """.trimIndent()
@@ -474,7 +478,7 @@ internal class NetworkLayerClassJsonDetectorTest {
   }
 
   @Test
-  fun `java file with SerializedName`() {
+  fun `java file with Json`() {
     lint()
         .files(
             java(
@@ -566,7 +570,7 @@ internal class NetworkLayerClassJsonDetectorTest {
   }
 
   @Test
-  fun `java file without SerializedName`() {
+  fun `java file without Json`() {
     lint()
         .files(
             java(
