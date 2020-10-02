@@ -664,7 +664,6 @@ internal class NetworkLayerClassJsonDetectorTest {
 
           @Retention(RUNTIME)
           @Documented
-          @Target({ElementType.TYPE})
           public @interface JsonClass {
             boolean generateAdapter();
             String generator() default "";

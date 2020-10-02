@@ -22,7 +22,7 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
   class NetworkLayerDtoFieldVisitor(private val context: JavaContext) : Visitor(context) {
 
     override fun visitMethod(node: UMethod) {
-      val allFields = findAllFieldsOf(node)
+      val allFields = findAllFieldsOf(node).filterNot { !it.isStatic && it.containingClass?.isEnum == true }
 
       val checkedFields = allFields.filterNot(::hasJsonNameAnnotation)
           .map { it.name }
@@ -52,7 +52,7 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
     private fun hasJsonNameAnnotation(field: UField): Boolean {
       return try {
         field.text.contains("@Json")
-      } catch (ignored: Exception) {
+      } catch (ignored: Throwable) {
         context
           .evaluator
           .getAllAnnotations(field as UAnnotated, true)
