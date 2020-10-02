@@ -505,11 +505,6 @@ internal class NetworkLayerClassJsonDetectorTest {
                 class Dto {
                     @Json(name = "a") final int totalResults;
                     @Json(name = "b") final int totalNewResults;
-
-                    Dto(int totalResults, int totalNewResults) {
-                      this.totalResult = totalResults;
-                      this.totalNewResults = totalNewResults;
-                    }
                 }
                 """.trimIndent()
             )

@@ -29,23 +29,26 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
           .mapNotNull { it.containingClass }
           .toSet()
 
-      val constructorParamsWithJson: MutableList<String> = mutableListOf()
-
-      val constructorParameter: List<JvmParameter> = classes
-          .map { it.constructors.first().parameters }
-          .fold(mutableListOf(), { acc, arrayOfJvmParameters -> acc.apply { addAll(arrayOfJvmParameters) } })
-
-      constructorParameter.forEach { parameter ->
-          val name = parameter.name
-          if (name != null && parameter.annotations.any { annotation -> annotation.qualifiedName?.endsWith("Json") == true }) {
-            constructorParamsWithJson.add(name)
-          }
-      }
-
       val checkedFields = allFields
           .filterNot(::hasJsonNameAnnotation)
-          .map { it.name } - constructorParamsWithJson
+          .map { it.name }
+          .toMutableList()
 
+      if (checkedFields.isNotEmpty()) {
+          val constructorParamsWithJson: MutableList<String> = mutableListOf()
+
+          val constructorParameter: List<JvmParameter> = classes
+            .mapNotNull { it.constructors.firstOrNull()?.parameters }
+            .fold(mutableListOf(), { acc, arrayOfJvmParameters -> acc.apply { addAll(arrayOfJvmParameters) } })
+
+          constructorParameter.forEach { parameter ->
+            val name = parameter.name
+            if (name != null && parameter.annotations.any { annotation -> annotation.qualifiedName?.endsWith("Json") == true }) {
+              constructorParamsWithJson.add(name)
+            }
+          }
+          checkedFields -= constructorParamsWithJson
+      }
       if (checkedFields.isNotEmpty()) {
         context.report(
             issue = ISSUE_NETWORK_LAYER_CLASS_JSON_RULE,
