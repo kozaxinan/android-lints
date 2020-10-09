@@ -71,15 +71,11 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
     }
 
     private fun hasJsonNameAnnotation(field: UField): Boolean {
-      return try {
-        field.text.contains("@Json")
-      } catch (ignored: Throwable) {
-        context
-          .evaluator
-          .getAllAnnotations(field as UAnnotated, true)
-          .mapNotNull { uAnnotation -> uAnnotation.qualifiedName }
-          .any { it.endsWith("Json") }
-      }
+      return context
+        .evaluator
+        .getAllAnnotations(field as UAnnotated, true)
+        .mapNotNull { uAnnotation -> uAnnotation.qualifiedName }
+        .any { it.endsWith("Json") }
     }
 
     private fun hasJsonClassAnnotation(clazz: PsiClass): Boolean {

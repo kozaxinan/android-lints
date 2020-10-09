@@ -103,22 +103,22 @@ internal class NetworkLayerClassJsonDetectorTest {
                 import com.squareup.moshi.JsonClass
                 
                 @JsonClass(generateAdapter = true)
-                data class Dto(
+                internal data class Dto(
+                    @Json(name = "inner") val inners: List<InnerDto>
+                ) {
+                
+                  @JsonClass(generateAdapter = true)
+                  data class InnerDto(
                     @Json(name = "type") val type: PremiumType
-                )
-                """.trimIndent()
-            ),
-            kotlin(
-                """
-                package foo
+                  ) {
+                  
+                    enum class PremiumType {
 
-                import com.squareup.moshi.Json
-                import com.squareup.moshi.JsonClass
-
-                enum class PremiumType {
-
-                  @Json(name = "SCHUFA") SCHUFA,
-                  ARVATO;
+                      @Json(name = "SCHUFA") 
+                      SCHUFA,
+                      ARVATO
+                    }
+                  }
                 }
                 """.trimIndent()
             )
@@ -127,11 +127,7 @@ internal class NetworkLayerClassJsonDetectorTest {
         .run()
         .expect(
             """
-              src/foo/Api.kt:8: Information: Return type doesn't have @JsonClass annotation for [KtLightClassImpl:enum class PremiumType {
-
-                @Json(name = "SCHUFA") SCHUFA,
-                ARVATO;
-              }] classes. [NetworkLayerClassJsonClassRule]
+              src/foo/Api.kt:8: Information: Return type doesn't have @JsonClass annotation for [PsiClass:PremiumType] classes. [NetworkLayerClassJsonClassRule]
                 fun get(): Dto
                     ~~~
               src/foo/Api.kt:8: Information: Return type doesn't have @Json annotation for [ARVATO] fields. [NetworkLayerClassJsonRule]
