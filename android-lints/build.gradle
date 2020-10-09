@@ -9,6 +9,10 @@ android {
   defaultConfig {
     minSdkVersion 14
   }
+
+  buildFeatures {
+    buildConfig = false
+  }
 }
 
 dependencies {
