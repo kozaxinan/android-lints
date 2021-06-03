@@ -1,9 +1,7 @@
 package com.kozaxinan.android.checks
 
 import com.android.tools.lint.checks.infrastructure.TestFile
-import com.android.tools.lint.checks.infrastructure.TestFiles.bytes
-import com.android.tools.lint.checks.infrastructure.TestFiles.java
-import com.android.tools.lint.checks.infrastructure.TestFiles.kotlin
+import com.android.tools.lint.checks.infrastructure.TestFiles.*
 import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
 import com.kozaxinan.android.checks.NetworkLayerClassJsonDetector.Companion.ISSUE_NETWORK_LAYER_CLASS_JSON_CLASS_RULE
 import com.kozaxinan.android.checks.NetworkLayerClassJsonDetector.Companion.ISSUE_NETWORK_LAYER_CLASS_JSON_RULE
@@ -14,22 +12,22 @@ private val ISSUES_TO_TEST = arrayOf(ISSUE_NETWORK_LAYER_CLASS_JSON_RULE, ISSUE_
 @Suppress("UnstableApiUsage")
 internal class NetworkLayerClassJsonDetectorTest {
 
-  private fun retrofit(): TestFile.BinaryTestFile = bytes(
-      "libs/retrofit-2.7.2.jar",
-      javaClass
-          .getResourceAsStream("/retrofit-2.7.2.jar")
-          .readBytes()
-  )
+    private fun retrofit(): TestFile.BinaryTestFile = bytes(
+            "libs/retrofit-2.7.2.jar",
+            javaClass
+                    .getResourceAsStream("/retrofit-2.7.2.jar")
+                    .readBytes()
+    )
 
-  @Test
-  fun `kotlin file with Json`() {
-    lint()
-        .files(
-            retrofit(),
-            jsonAnnotation(),
-            jsonClassAnnotation(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file with Json`() {
+        lint()
+                .files(
+                        retrofit(),
+                        jsonAnnotation(),
+                        jsonClassAnnotation(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -40,9 +38,9 @@ internal class NetworkLayerClassJsonDetectorTest {
                   suspend fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 import com.squareup.moshi.Json
@@ -68,22 +66,22 @@ internal class NetworkLayerClassJsonDetectorTest {
                   }
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(*ISSUES_TO_TEST)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(*ISSUES_TO_TEST)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `kotlin enum file with JsonClass`() {
-    lint()
-        .files(
-            retrofit(),
-            jsonAnnotation(),
-            jsonClassAnnotation(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin enum file with JsonClass`() {
+        lint()
+                .files(
+                        retrofit(),
+                        jsonAnnotation(),
+                        jsonClassAnnotation(),
+                        kotlin(
+                                """
                 package foo
 
                 import retrofit2.http.GET
@@ -94,9 +92,9 @@ internal class NetworkLayerClassJsonDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
 
                 import com.squareup.moshi.Json
@@ -121,13 +119,13 @@ internal class NetworkLayerClassJsonDetectorTest {
                   }
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(*ISSUES_TO_TEST)
-        .run()
-        .expect(
-            """
-              src/foo/Api.kt:8: Information: Return type doesn't have @JsonClass annotation for [PsiClass:PremiumType] classes. [NetworkLayerClassJsonClassRule]
+                        )
+                )
+                .issues(*ISSUES_TO_TEST)
+                .run()
+                .expect(
+                        """
+              src/foo/Api.kt:8: Information: Return type doesn't have @JsonClass annotation for [PremiumType] classes. [NetworkLayerClassJsonClassRule]
                 fun get(): Dto
                     ~~~
               src/foo/Api.kt:8: Information: Return type doesn't have @Json annotation for [ARVATO] fields. [NetworkLayerClassJsonRule]
@@ -135,18 +133,18 @@ internal class NetworkLayerClassJsonDetectorTest {
                     ~~~
               0 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `kotlin file without SerializedName`() {
-    lint()
-        .files(
-            retrofit(),
-            jsonAnnotation(),
-            jsonClassAnnotation(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file without SerializedName`() {
+        lint()
+                .files(
+                        retrofit(),
+                        jsonAnnotation(),
+                        jsonClassAnnotation(),
+                        kotlin(
+                                """
                 package foo
 
                 import retrofit2.http.GET
@@ -157,9 +155,9 @@ internal class NetworkLayerClassJsonDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
 
                 import com.squareup.moshi.Json
@@ -172,29 +170,29 @@ internal class NetworkLayerClassJsonDetectorTest {
                     @Json(name = "name") val name: String
                 )
                 """.trimIndent()
-            )
-        )
-        .issues(*ISSUES_TO_TEST)
-        .run()
-        .expect(
-            """
+                        )
+                )
+                .issues(*ISSUES_TO_TEST)
+                .run()
+                .expect(
+                        """
             src/foo/Api.kt:8: Information: Return type doesn't have @Json annotation for [totalNewResults] fields. [NetworkLayerClassJsonRule]
               fun get(): Dto
                   ~~~
             0 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `kotlin file without SerializedName for suspend method`() {
-    lint()
-        .files(
-            retrofit(),
-            jsonAnnotation(),
-            jsonClassAnnotation(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file without SerializedName for suspend method`() {
+        lint()
+                .files(
+                        retrofit(),
+                        jsonAnnotation(),
+                        jsonClassAnnotation(),
+                        kotlin(
+                                """
                 package foo
 
                 import retrofit2.http.GET
@@ -205,9 +203,9 @@ internal class NetworkLayerClassJsonDetectorTest {
                   suspend fun get(some:String, iasda: Int): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
 
                 import com.squareup.moshi.Json
@@ -220,30 +218,30 @@ internal class NetworkLayerClassJsonDetectorTest {
                     @Json(name = "name") val name: String
                 )
                 """.trimIndent()
-            )
-        )
-        .issues(*ISSUES_TO_TEST)
-        .run()
-        .expect(
-            """
+                        )
+                )
+                .issues(*ISSUES_TO_TEST)
+                .run()
+                .expect(
+                        """
               src/foo/Api.kt:8: Information: Return type doesn't have @Json annotation for [totalNewResults] fields. [NetworkLayerClassJsonRule]
                 suspend fun get(some:String, iasda: Int): Dto
                             ~~~
               0 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `kotlin file without SerializedName from multiple interface`() {
-    lint()
-        .allowDuplicates()
-        .files(
-            retrofit(),
-            jsonAnnotation(),
-            jsonClassAnnotation(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file without SerializedName from multiple interface`() {
+        lint()
+                .allowDuplicates()
+                .files(
+                        retrofit(),
+                        jsonAnnotation(),
+                        jsonClassAnnotation(),
+                        kotlin(
+                                """
                 package foo
 
                 import retrofit2.http.GET
@@ -254,9 +252,9 @@ internal class NetworkLayerClassJsonDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
 
                 import retrofit2.http.GET
@@ -267,9 +265,9 @@ internal class NetworkLayerClassJsonDetectorTest {
                   fun get2(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
 
                 class Dto(
@@ -277,22 +275,16 @@ internal class NetworkLayerClassJsonDetectorTest {
                     val totalNewResults: Int
                 )
                 """.trimIndent()
-            )
-        )
-        .issues(*ISSUES_TO_TEST)
-        .run()
-        .expect(
-            """
-              src/foo/Api.kt:8: Information: Return type doesn't have @JsonClass annotation for [KtLightClassImpl:class Dto(
-                  val totalResults: Int,
-                  val totalNewResults: Int
-              )] classes. [NetworkLayerClassJsonClassRule]
+                        )
+                )
+                .issues(*ISSUES_TO_TEST)
+                .run()
+                .expect(
+                        """
+              src/foo/Api.kt:8: Information: Return type doesn't have @JsonClass annotation for [Dto] classes. [NetworkLayerClassJsonClassRule]
                 fun get(): Dto
                     ~~~
-              src/foo/Api2.kt:8: Information: Return type doesn't have @JsonClass annotation for [KtLightClassImpl:class Dto(
-                  val totalResults: Int,
-                  val totalNewResults: Int
-              )] classes. [NetworkLayerClassJsonClassRule]
+              src/foo/Api2.kt:8: Information: Return type doesn't have @JsonClass annotation for [Dto] classes. [NetworkLayerClassJsonClassRule]
                 fun get2(): Dto
                     ~~~~
               src/foo/Api.kt:8: Information: Return type doesn't have @Json annotation for [totalResults, totalNewResults] fields. [NetworkLayerClassJsonRule]
@@ -303,18 +295,18 @@ internal class NetworkLayerClassJsonDetectorTest {
                     ~~~~
               0 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `kotlin file inner dto without SerializedName`() {
-    lint()
-        .files(
-            retrofit(),
-            jsonAnnotation(),
-            jsonClassAnnotation(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file inner dto without SerializedName`() {
+        lint()
+                .files(
+                        retrofit(),
+                        jsonAnnotation(),
+                        jsonClassAnnotation(),
+                        kotlin(
+                                """
                 package foo
 
                 import retrofit2.http.GET
@@ -325,9 +317,9 @@ internal class NetworkLayerClassJsonDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 import com.squareup.moshi.Json
@@ -339,9 +331,9 @@ internal class NetworkLayerClassJsonDetectorTest {
                     @Json(name = "innerDto") var innerDto: InnerDto
                 )
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
 
                 import com.squareup.moshi.Json
@@ -351,15 +343,13 @@ internal class NetworkLayerClassJsonDetectorTest {
                     var innerResults: Int
                 )
                 """.trimIndent()
-            )
-        )
-        .issues(*ISSUES_TO_TEST)
-        .run()
-        .expect(
-            """
-              src/foo/Api.kt:8: Information: Return type doesn't have @JsonClass annotation for [KtLightClassImpl:class InnerDto(
-                  var innerResults: Int
-              )] classes. [NetworkLayerClassJsonClassRule]
+                        )
+                )
+                .issues(*ISSUES_TO_TEST)
+                .run()
+                .expect(
+                        """
+              src/foo/Api.kt:8: Information: Return type doesn't have @JsonClass annotation for [InnerDto] classes. [NetworkLayerClassJsonClassRule]
                 fun get(): Dto
                     ~~~
               src/foo/Api.kt:8: Information: Return type doesn't have @Json annotation for [innerResults] fields. [NetworkLayerClassJsonRule]
@@ -367,18 +357,18 @@ internal class NetworkLayerClassJsonDetectorTest {
                     ~~~
               0 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `kotlin file return type generic without SerializedName`() {
-    lint()
-        .files(
-            retrofit(),
-            jsonAnnotation(),
-            jsonClassAnnotation(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file return type generic without SerializedName`() {
+        lint()
+                .files(
+                        retrofit(),
+                        jsonAnnotation(),
+                        jsonClassAnnotation(),
+                        kotlin(
+                                """
                 package foo
 
                 import retrofit2.Call
@@ -390,9 +380,9 @@ internal class NetworkLayerClassJsonDetectorTest {
                   fun get(): Call<List<Dto>>
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
 
                 class Dto(
@@ -400,16 +390,13 @@ internal class NetworkLayerClassJsonDetectorTest {
                     val totalNewResults: Int
                 )
                 """.trimIndent()
-            )
-        )
-        .issues(*ISSUES_TO_TEST)
-        .run()
-        .expect(
-            """
-              src/foo/Api.kt:9: Information: Return type doesn't have @JsonClass annotation for [KtLightClassImpl:class Dto(
-                  val totalResults: Int,
-                  val totalNewResults: Int
-              )] classes. [NetworkLayerClassJsonClassRule]
+                        )
+                )
+                .issues(*ISSUES_TO_TEST)
+                .run()
+                .expect(
+                        """
+              src/foo/Api.kt:9: Information: Return type doesn't have @JsonClass annotation for [Dto] classes. [NetworkLayerClassJsonClassRule]
                 fun get(): Call<List<Dto>>
                     ~~~
               src/foo/Api.kt:9: Information: Return type doesn't have @Json annotation for [totalResults, totalNewResults] fields. [NetworkLayerClassJsonRule]
@@ -417,18 +404,18 @@ internal class NetworkLayerClassJsonDetectorTest {
                     ~~~
               0 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `kotlin file return type generic with Unit`() {
-    lint()
-        .files(
-            retrofit(),
-            jsonAnnotation(),
-            jsonClassAnnotation(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file return type generic with Unit`() {
+        lint()
+                .files(
+                        retrofit(),
+                        jsonAnnotation(),
+                        jsonClassAnnotation(),
+                        kotlin(
+                                """
                 package foo
 
                 import retrofit2.Call
@@ -440,22 +427,22 @@ internal class NetworkLayerClassJsonDetectorTest {
                   fun get(): Call<List<Unit>>
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(*ISSUES_TO_TEST)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(*ISSUES_TO_TEST)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `kotlin file with Unit`() {
-    lint()
-        .files(
-            retrofit(),
-            jsonAnnotation(),
-            jsonClassAnnotation(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file with Unit`() {
+        lint()
+                .files(
+                        retrofit(),
+                        jsonAnnotation(),
+                        jsonClassAnnotation(),
+                        kotlin(
+                                """
                 package foo
 
                 import retrofit2.http.GET
@@ -466,19 +453,19 @@ internal class NetworkLayerClassJsonDetectorTest {
                   fun get(): Unit
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(*ISSUES_TO_TEST)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(*ISSUES_TO_TEST)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `java file with Json`() {
-    lint()
-        .files(
-            java(
-                """
+    @Test
+    fun `java file with Json`() {
+        lint()
+                .files(
+                        java(
+                                """
                 package foo;
 
                 import retrofit2.http.GET;
@@ -489,9 +476,9 @@ internal class NetworkLayerClassJsonDetectorTest {
                   Dto get();
                 }
                 """.trimIndent()
-            ),
-            java(
-                """
+                        ),
+                        java(
+                                """
                 package foo;
 
                 import com.squareup.moshi.Json;
@@ -503,19 +490,19 @@ internal class NetworkLayerClassJsonDetectorTest {
                     @Json(name = "b") final int totalNewResults;
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(*ISSUES_TO_TEST)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(*ISSUES_TO_TEST)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `java file with Void`() {
-    lint()
-        .files(
-            java(
-                """
+    @Test
+    fun `java file with Void`() {
+        lint()
+                .files(
+                        java(
+                                """
                 package foo;
 
                 import retrofit2.http.GET;
@@ -526,19 +513,19 @@ internal class NetworkLayerClassJsonDetectorTest {
                   Void get();
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(*ISSUES_TO_TEST)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(*ISSUES_TO_TEST)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `java file generic method with Void`() {
-    lint()
-        .files(
-            java(
-                """
+    @Test
+    fun `java file generic method with Void`() {
+        lint()
+                .files(
+                        java(
+                                """
                 package foo;
 
                 import retrofit2.Call;
@@ -553,19 +540,19 @@ internal class NetworkLayerClassJsonDetectorTest {
                   Call<Void> get2();
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(*ISSUES_TO_TEST)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(*ISSUES_TO_TEST)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `java file without Json`() {
-    lint()
-        .files(
-            java(
-                """
+    @Test
+    fun `java file without Json`() {
+        lint()
+                .files(
+                        java(
+                                """
                 package foo;
 
                 import retrofit2.http.GET;
@@ -579,9 +566,9 @@ internal class NetworkLayerClassJsonDetectorTest {
                   Dto get2();
                 }
                 """.trimIndent()
-            ),
-            java(
-                """
+                        ),
+                        java(
+                                """
                 package foo;
 
                 import com.squareup.moshi.Json;
@@ -602,16 +589,16 @@ internal class NetworkLayerClassJsonDetectorTest {
                     }
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(*ISSUES_TO_TEST)
-        .run()
-        .expect(
-            """
-              src/foo/Api.java:8: Information: Return type doesn't have @JsonClass annotation for [PsiClass:Dto] classes. [NetworkLayerClassJsonClassRule]
+                        )
+                )
+                .issues(*ISSUES_TO_TEST)
+                .run()
+                .expect(
+                        """
+              src/foo/Api.java:8: Information: Return type doesn't have @JsonClass annotation for [Dto] classes. [NetworkLayerClassJsonClassRule]
                 Dto get();
                     ~~~
-              src/foo/Api.java:11: Information: Return type doesn't have @JsonClass annotation for [PsiClass:Dto] classes. [NetworkLayerClassJsonClassRule]
+              src/foo/Api.java:11: Information: Return type doesn't have @JsonClass annotation for [Dto] classes. [NetworkLayerClassJsonClassRule]
                 Dto get2();
                     ~~~~
               src/foo/Api.java:8: Information: Return type doesn't have @Json annotation for [totalNewResults] fields. [NetworkLayerClassJsonRule]
@@ -622,12 +609,12 @@ internal class NetworkLayerClassJsonDetectorTest {
                     ~~~~
               0 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  private fun jsonAnnotation(): TestFile {
-    return java(
-        """
+    private fun jsonAnnotation(): TestFile {
+        return java(
+                """
           package com.squareup.moshi;
 
           import java.lang.annotation.Documented;
@@ -643,12 +630,12 @@ internal class NetworkLayerClassJsonDetectorTest {
             String name();
           }
         """.trimIndent()
-    )
-  }
+        )
+    }
 
-  private fun jsonClassAnnotation(): TestFile {
-    return java(
-        """
+    private fun jsonClassAnnotation(): TestFile {
+        return java(
+                """
           package com.squareup.moshi;
 
           import java.lang.annotation.Documented;
@@ -664,6 +651,6 @@ internal class NetworkLayerClassJsonDetectorTest {
             String generator() default "";
           }
         """.trimIndent()
-    )
-  }
+        )
+    }
 }

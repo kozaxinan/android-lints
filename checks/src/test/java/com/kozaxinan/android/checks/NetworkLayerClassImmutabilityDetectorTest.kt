@@ -1,9 +1,7 @@
 package com.kozaxinan.android.checks
 
 import com.android.tools.lint.checks.infrastructure.TestFile
-import com.android.tools.lint.checks.infrastructure.TestFiles.bytes
-import com.android.tools.lint.checks.infrastructure.TestFiles.java
-import com.android.tools.lint.checks.infrastructure.TestFiles.kotlin
+import com.android.tools.lint.checks.infrastructure.TestFiles.*
 import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
 import com.kozaxinan.android.checks.NetworkLayerClassImmutabilityDetector.Companion.ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE
 import org.junit.Test
@@ -11,20 +9,20 @@ import org.junit.Test
 @Suppress("UnstableApiUsage")
 internal class NetworkLayerClassImmutabilityDetectorTest {
 
-  private fun Any.retrofit(): TestFile.BinaryTestFile = bytes(
-      "libs/retrofit-2.7.2.jar",
-      javaClass
-          .getResourceAsStream("/retrofit-2.7.2.jar")
-          .readBytes()
-  )
+    private fun Any.retrofit(): TestFile.BinaryTestFile = bytes(
+            "libs/retrofit-2.7.2.jar",
+            javaClass
+                    .getResourceAsStream("/retrofit-2.7.2.jar")
+                    .readBytes()
+    )
 
-  @Test
-  fun `kotlin file with val`() {
-    lint()
-        .files(
-            retrofit(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file with val`() {
+        lint()
+                .files(
+                        retrofit(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -35,9 +33,9 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 data class Dto(
@@ -53,20 +51,20 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   }
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `kotlin file with Completable`() {
-    lint()
-        .files(
-            retrofit(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file with Completable`() {
+        lint()
+                .files(
+                        retrofit(),
+                        kotlin(
+                                """
                 package foo
                 
                 import io.reactivex.Completable
@@ -78,20 +76,20 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   fun get(): Completable
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `kotlin file with val and Parcelable`() {
-    lint()
-        .files(
-            retrofit(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file with val and Parcelable`() {
+        lint()
+                .files(
+                        retrofit(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -102,9 +100,9 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 data class Dto(
@@ -133,20 +131,20 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   }
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `kotlin file with immutable list`() {
-    lint()
-        .files(
-            retrofit(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file with immutable list`() {
+        lint()
+                .files(
+                        retrofit(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -157,29 +155,29 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 data class Dto(
                     val list: List<String>
                 )
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `kotlin file with mutable list`() {
-    lint()
-        .files(
-            retrofit(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file with mutable list`() {
+        lint()
+                .files(
+                        retrofit(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -190,36 +188,36 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 data class Dto(
                     val list: MutableList<String>
                 )
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expect(
-            """
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+                .run()
+                .expect(
+                        """
               src/foo/Api.kt:8: Error: Return type contains mutable class types. [list in Dto] need to be immutable. [NetworkLayerImmutableClassRule]
                 fun get(): Dto
                     ~~~
               1 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `java file with mutable list`() {
-    lint()
-        .files(
-            retrofit(),
-            java(
-                """
+    @Test
+    fun `java file with mutable list`() {
+        lint()
+                .files(
+                        retrofit(),
+                        java(
+                                """
                   package foo;
                   
                   import retrofit2.http.GET;
@@ -230,9 +228,9 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                     Dto get();
                   }
                 """.trimIndent()
-            ),
-            java(
-                """
+                        ),
+                        java(
+                                """
                   package foo;
               
                   import java.util.List;
@@ -242,20 +240,20 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                     public final List<String> list;
                   }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `kotlin enum file with val`() {
-    lint()
-        .files(
-            retrofit(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin enum file with val`() {
+        lint()
+                .files(
+                        retrofit(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -266,9 +264,9 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 data class Dto(
@@ -277,9 +275,9 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                     val name: String
                 )
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 enum class PremiumType {
@@ -287,20 +285,20 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   ARVATO;
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `kotlin file with var`() {
-    lint()
-        .files(
-            retrofit(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file with var`() {
+        lint()
+                .files(
+                        retrofit(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -311,9 +309,9 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 data class Dto(
@@ -322,28 +320,28 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                     val name: String
                 )
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expect(
-            """
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+                .run()
+                .expect(
+                        """
               src/foo/Api.kt:8: Error: Return type is not immutable. [totalNewResults in Dto] need to be final or val. [NetworkLayerImmutableClassRule]
                 fun get(): Dto
                     ~~~
               1 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `kotlin file with var from multiple interface`() {
-    lint()
-        .allowDuplicates()
-        .files(
-            retrofit(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file with var from multiple interface`() {
+        lint()
+                .allowDuplicates()
+                .files(
+                        retrofit(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -354,9 +352,9 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -367,9 +365,9 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   fun get2(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 class Dto(
@@ -377,12 +375,12 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                     var totalNewResults: Int
                 )
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expect(
-            """
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+                .run()
+                .expect(
+                        """
               src/foo/Api.kt:8: Error: Return type is not immutable. [totalNewResults in Dto] need to be final or val. [NetworkLayerImmutableClassRule]
                 fun get(): Dto
                     ~~~
@@ -391,16 +389,16 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                     ~~~~
               2 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `kotlin file inner dto with var`() {
-    lint()
-        .files(
-            retrofit(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file inner dto with var`() {
+        lint()
+                .files(
+                        retrofit(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -411,9 +409,9 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 class Dto(
@@ -421,36 +419,36 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                     var innerDto: InnerDto
                 )
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 class InnerDto(
                     var innerResults: Int
                 )
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expect(
-            """
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+                .run()
+                .expect(
+                        """
               src/foo/Api.kt:8: Error: Return type is not immutable. [innerDto in Dto, innerResults in InnerDto] need to be final or val. [NetworkLayerImmutableClassRule]
                 fun get(): Dto
                     ~~~
               1 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `kotlin file return type generic with var`() {
-    lint()
-        .files(
-            retrofit(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file return type generic with var`() {
+        lint()
+                .files(
+                        retrofit(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.Call
@@ -462,9 +460,9 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   fun get(): Call<List<Dto>>
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 class Dto(
@@ -472,27 +470,27 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                     var totalNewResults: Int
                 )
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expect(
-            """
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+                .run()
+                .expect(
+                        """
               src/foo/Api.kt:9: Error: Return type is not immutable. [totalNewResults in Dto] need to be final or val. [NetworkLayerImmutableClassRule]
                 fun get(): Call<List<Dto>>
                     ~~~
               1 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `kotlin file return type generic with Unit`() {
-    lint()
-        .files(
-            retrofit(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file return type generic with Unit`() {
+        lint()
+                .files(
+                        retrofit(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.Call
@@ -504,20 +502,20 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   fun get(): Call<List<Unit>>
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `kotlin file with Unit`() {
-    lint()
-        .files(
-            retrofit(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file with Unit`() {
+        lint()
+                .files(
+                        retrofit(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -528,19 +526,19 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   fun get(): Unit
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `java file with final`() {
-    lint()
-        .files(
-            java(
-                """
+    @Test
+    fun `java file with final`() {
+        lint()
+                .files(
+                        java(
+                                """
                 package foo;
                 
                 import retrofit2.http.GET;
@@ -551,9 +549,9 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   Dto get();
                 }
                 """.trimIndent()
-            ),
-            java(
-                """
+                        ),
+                        java(
+                                """
                 package foo;
                 
                 class Dto {
@@ -566,19 +564,19 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                     }
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `java file with Void`() {
-    lint()
-        .files(
-            java(
-                """
+    @Test
+    fun `java file with Void`() {
+        lint()
+                .files(
+                        java(
+                                """
                 package foo;
                 
                 import retrofit2.http.GET;
@@ -589,19 +587,19 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   Void get();
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `java file generic method with Void`() {
-    lint()
-        .files(
-            java(
-                """
+    @Test
+    fun `java file generic method with Void`() {
+        lint()
+                .files(
+                        java(
+                                """
                 package foo;
                 
                 import retrofit2.Call;
@@ -616,19 +614,19 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   Call<Void> get2();
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `java file without final`() {
-    lint()
-        .files(
-            java(
-                """
+    @Test
+    fun `java file without final`() {
+        lint()
+                .files(
+                        java(
+                                """
                 package foo;
                 
                 import retrofit2.http.GET;
@@ -642,9 +640,9 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                   Dto get2();
                 }
                 """.trimIndent()
-            ),
-            java(
-                """
+                        ),
+                        java(
+                                """
                 package foo;
                 
                 import java.util.ArrayList;
@@ -662,12 +660,12 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                     }
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
-        .run()
-        .expect(
-            """
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+                .run()
+                .expect(
+                        """
               src/foo/Api.java:8: Error: Return type is not immutable. [totalNewResults in Dto] need to be final or val. [NetworkLayerImmutableClassRule]
                 Dto get();
                     ~~~
@@ -676,6 +674,6 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                     ~~~~
               2 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 }
