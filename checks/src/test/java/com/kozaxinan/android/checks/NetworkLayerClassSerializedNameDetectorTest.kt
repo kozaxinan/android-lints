@@ -1,9 +1,7 @@
 package com.kozaxinan.android.checks
 
 import com.android.tools.lint.checks.infrastructure.TestFile
-import com.android.tools.lint.checks.infrastructure.TestFiles.bytes
-import com.android.tools.lint.checks.infrastructure.TestFiles.java
-import com.android.tools.lint.checks.infrastructure.TestFiles.kotlin
+import com.android.tools.lint.checks.infrastructure.TestFiles.*
 import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
 import com.kozaxinan.android.checks.NetworkLayerClassSerializedNameDetector.Companion.ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE
 import org.junit.Test
@@ -11,28 +9,28 @@ import org.junit.Test
 @Suppress("UnstableApiUsage")
 internal class NetworkLayerClassSerializedNameDetectorTest {
 
-  private fun retrofit(): TestFile.BinaryTestFile = bytes(
-      "libs/retrofit-2.7.2.jar",
-      javaClass
-          .getResourceAsStream("/retrofit-2.7.2.jar")
-          .readBytes()
-  )
+    private fun retrofit(): TestFile.BinaryTestFile = bytes(
+            "libs/retrofit-2.7.2.jar",
+            javaClass
+                    .getResourceAsStream("/retrofit-2.7.2.jar")
+                    .readBytes()
+    )
 
-  private fun gson(): TestFile.BinaryTestFile = bytes(
-      "libs/gson-2.8.6.jar",
-      javaClass
-          .getResourceAsStream("/gson-2.8.6.jar")
-          .readBytes()
-  )
+    private fun gson(): TestFile.BinaryTestFile = bytes(
+            "libs/gson-2.8.6.jar",
+            javaClass
+                    .getResourceAsStream("/gson-2.8.6.jar")
+                    .readBytes()
+    )
 
-  @Test
-  fun `kotlin file with SerializedName`() {
-    lint()
-        .files(
-            retrofit(),
-            gson(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file with SerializedName`() {
+        lint()
+                .files(
+                        retrofit(),
+                        gson(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -43,9 +41,9 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 import com.google.gson.annotations.SerializedName
@@ -63,21 +61,21 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   }
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `kotlin enum file without SerializedName`() {
-    lint()
-        .files(
-            retrofit(),
-            gson(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin enum file without SerializedName`() {
+        lint()
+                .files(
+                        retrofit(),
+                        gson(),
+                        kotlin(
+                                """
                 package foo
 
                 import retrofit2.http.GET
@@ -88,9 +86,9 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
 
                 import com.google.gson.annotations.SerializedName
@@ -99,9 +97,9 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                     @SerializedName("type") val type: PremiumType
                 )
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 import com.google.gson.annotations.SerializedName
@@ -112,28 +110,28 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   ARVATO;
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
-        .run()
-        .expect(
-            """
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
+                .run()
+                .expect(
+                        """
               src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [ARVATO] fields. [NetworkLayerClassSerializedNameRule]
                 fun get(): Dto
                     ~~~
               0 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `kotlin enum with fields file without SerializedName`() {
-    lint()
-        .files(
-            retrofit(),
-            gson(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin enum with fields file without SerializedName`() {
+        lint()
+                .files(
+                        retrofit(),
+                        gson(),
+                        kotlin(
+                                """
                 package foo
 
                 import retrofit2.http.GET
@@ -144,9 +142,9 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
 
                 import com.google.gson.annotations.SerializedName
@@ -155,9 +153,9 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                     @SerializedName("type") val type: PremiumType
                 )
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 import com.google.gson.annotations.SerializedName
@@ -168,28 +166,28 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   ARVATO(2);
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
-        .run()
-        .expect(
-            """
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
+                .run()
+                .expect(
+                        """
               src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [ARVATO] fields. [NetworkLayerClassSerializedNameRule]
                 fun get(): Dto
                     ~~~
               0 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `kotlin file without SerializedName`() {
-    lint()
-        .files(
-            retrofit(),
-            gson(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file without SerializedName`() {
+        lint()
+                .files(
+                        retrofit(),
+                        gson(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -200,9 +198,9 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 import com.google.gson.annotations.SerializedName
@@ -213,28 +211,28 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                     @SerializedName("name") val name: String
                 )
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
-        .run()
-        .expect(
-            """
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
+                .run()
+                .expect(
+                        """
             src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
               fun get(): Dto
                   ~~~
             0 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `kotlin file without SerializedName for suspend method`() {
-    lint()
-        .files(
-            retrofit(),
-            gson(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file without SerializedName for suspend method`() {
+        lint()
+                .files(
+                        retrofit(),
+                        gson(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -245,9 +243,9 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   suspend fun get(some:String, iasda: Int): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 import com.google.gson.annotations.SerializedName
@@ -258,29 +256,29 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                     @SerializedName("name") val name: String
                 )
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
-        .run()
-        .expect(
-            """
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
+                .run()
+                .expect(
+                        """
               src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
                 suspend fun get(some:String, iasda: Int): Dto
                             ~~~
               0 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `kotlin file without SerializedName from multiple interface`() {
-    lint()
-        .allowDuplicates()
-        .files(
-            retrofit(),
-            gson(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file without SerializedName from multiple interface`() {
+        lint()
+                .allowDuplicates()
+                .files(
+                        retrofit(),
+                        gson(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -291,9 +289,9 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -304,9 +302,9 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   fun get2(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 class Dto(
@@ -314,12 +312,12 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                     val totalNewResults: Int
                 )
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
-        .run()
-        .expect(
-            """
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
+                .run()
+                .expect(
+                        """
             src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalResults, totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
               fun get(): Dto
                   ~~~
@@ -328,17 +326,17 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   ~~~~
             0 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `kotlin file inner dto without SerializedName`() {
-    lint()
-        .files(
-            retrofit(),
-            gson(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file inner dto without SerializedName`() {
+        lint()
+                .files(
+                        retrofit(),
+                        gson(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -349,9 +347,9 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   fun get(): Dto
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 class Dto(
@@ -359,37 +357,37 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                     var innerDto: InnerDto
                 )
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 class InnerDto(
                     var innerResults: Int
                 )
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
-        .run()
-        .expect(
-            """
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
+                .run()
+                .expect(
+                        """
             src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalResults, innerDto, innerResults] fields. [NetworkLayerClassSerializedNameRule]
               fun get(): Dto
                   ~~~
             0 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `kotlin file return type generic without SerializedName`() {
-    lint()
-        .files(
-            retrofit(),
-            gson(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file return type generic without SerializedName`() {
+        lint()
+                .files(
+                        retrofit(),
+                        gson(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.Call
@@ -401,9 +399,9 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   fun get(): Call<List<Dto>>
                 }
                 """.trimIndent()
-            ),
-            kotlin(
-                """
+                        ),
+                        kotlin(
+                                """
                 package foo
                 
                 class Dto(
@@ -411,28 +409,28 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                     val totalNewResults: Int
                 )
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
-        .run()
-        .expect(
-            """
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
+                .run()
+                .expect(
+                        """
             src/foo/Api.kt:9: Information: Return type doesn't have @SerializedName annotation for [totalResults, totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
               fun get(): Call<List<Dto>>
                   ~~~
             0 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 
-  @Test
-  fun `kotlin file return type generic with Unit`() {
-    lint()
-        .files(
-            retrofit(),
-            gson(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file return type generic with Unit`() {
+        lint()
+                .files(
+                        retrofit(),
+                        gson(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.Call
@@ -444,21 +442,21 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   fun get(): Call<List<Unit>>
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `kotlin file with Unit`() {
-    lint()
-        .files(
-            retrofit(),
-            gson(),
-            kotlin(
-                """
+    @Test
+    fun `kotlin file with Unit`() {
+        lint()
+                .files(
+                        retrofit(),
+                        gson(),
+                        kotlin(
+                                """
                 package foo
                 
                 import retrofit2.http.GET
@@ -469,19 +467,19 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   fun get(): Unit
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `java file with SerializedName`() {
-    lint()
-        .files(
-            java(
-                """
+    @Test
+    fun `java file with SerializedName`() {
+        lint()
+                .files(
+                        java(
+                                """
                 package foo;
                 
                 import retrofit2.http.GET;
@@ -492,9 +490,9 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   Dto get();
                 }
                 """.trimIndent()
-            ),
-            java(
-                """
+                        ),
+                        java(
+                                """
                 package foo;
                 
                 import com.google.gson.annotations.SerializedName;
@@ -509,19 +507,19 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                     }
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `java file with Void`() {
-    lint()
-        .files(
-            java(
-                """
+    @Test
+    fun `java file with Void`() {
+        lint()
+                .files(
+                        java(
+                                """
                 package foo;
                 
                 import retrofit2.http.GET;
@@ -532,19 +530,19 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   Void get();
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `java file generic method with Void`() {
-    lint()
-        .files(
-            java(
-                """
+    @Test
+    fun `java file generic method with Void`() {
+        lint()
+                .files(
+                        java(
+                                """
                 package foo;
                 
                 import retrofit2.Call;
@@ -559,19 +557,19 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   Call<Void> get2();
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
-        .run()
-        .expectClean()
-  }
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
+                .run()
+                .expectClean()
+    }
 
-  @Test
-  fun `java file without SerializedName`() {
-    lint()
-        .files(
-            java(
-                """
+    @Test
+    fun `java file without SerializedName`() {
+        lint()
+                .files(
+                        java(
+                                """
                 package foo;
                 
                 import retrofit2.http.GET;
@@ -585,9 +583,9 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   Dto get2();
                 }
                 """.trimIndent()
-            ),
-            java(
-                """
+                        ),
+                        java(
+                                """
                 package foo;
                 
                 import com.google.gson.annotations.SerializedName;
@@ -608,12 +606,12 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                     }
                 }
                 """.trimIndent()
-            )
-        )
-        .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
-        .run()
-        .expect(
-            """
+                        )
+                )
+                .issues(ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE)
+                .run()
+                .expect(
+                        """
             src/foo/Api.java:8: Information: Return type doesn't have @SerializedName annotation for [totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
               Dto get();
                   ~~~
@@ -622,6 +620,6 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
                   ~~~~
             0 errors, 0 warnings
             """.trimIndent()
-        )
-  }
+                )
+    }
 }

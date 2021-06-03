@@ -12,11 +12,7 @@ import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.kozaxinan.android.checks.RetrofitReturnTypeDetector.Visitor
 import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.uast.UAnnotated
-import org.jetbrains.uast.UClass
-import org.jetbrains.uast.UField
-import org.jetbrains.uast.UMethod
-import org.jetbrains.uast.toUElement
+import org.jetbrains.uast.*
 
 /**
  * Parent class for finding fields of return type of and Retrofit interface method.
