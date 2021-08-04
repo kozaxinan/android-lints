@@ -7,11 +7,11 @@ dependencies {
 
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compileOnly "com.android.tools.lint:lint-api:30.0.0-beta03"
-    compileOnly "com.android.tools.lint:lint-checks:30.0.0-beta03"
+    compileOnly "com.android.tools.lint:lint-api:30.0.0"
+    compileOnly "com.android.tools.lint:lint-checks:30.0.0"
 
-    testImplementation "com.android.tools.lint:lint:30.0.0-beta03"
-    testImplementation "com.android.tools.lint:lint-tests:30.0.0-beta03"
+    testImplementation "com.android.tools.lint:lint:30.0.0"
+    testImplementation "com.android.tools.lint:lint-tests:30.0.0"
     testImplementation "junit:junit:4.13.2"
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
 }

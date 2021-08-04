@@ -10,16 +10,16 @@ import org.junit.Test
 internal class NetworkLayerClassSerializedNameDetectorTest {
 
     private fun retrofit(): TestFile.BinaryTestFile = bytes(
-            "libs/retrofit-2.7.2.jar",
+            "libs/retrofit-2.9.0.jar",
             javaClass
-                    .getResourceAsStream("/retrofit-2.7.2.jar")
+                    .getResourceAsStream("/retrofit-2.9.0.jar")
                     .readBytes()
     )
 
     private fun gson(): TestFile.BinaryTestFile = bytes(
-            "libs/gson-2.8.6.jar",
+            "libs/gson-2.8.7.jar",
             javaClass
-                    .getResourceAsStream("/gson-2.8.6.jar")
+                    .getResourceAsStream("/gson-2.8.7.jar")
                     .readBytes()
     )
 
@@ -478,6 +478,8 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     fun `java file with SerializedName`() {
         lint()
                 .files(
+                        gson(),
+                        retrofit(),
                         java(
                                 """
                 package foo;
@@ -518,6 +520,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     fun `java file with Void`() {
         lint()
                 .files(
+                        retrofit(),
                         java(
                                 """
                 package foo;
@@ -541,6 +544,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     fun `java file generic method with Void`() {
         lint()
                 .files(
+                        retrofit(),
                         java(
                                 """
                 package foo;
@@ -568,6 +572,8 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     fun `java file without SerializedName`() {
         lint()
                 .files(
+                        gson(),
+                        retrofit(),
                         java(
                                 """
                 package foo;

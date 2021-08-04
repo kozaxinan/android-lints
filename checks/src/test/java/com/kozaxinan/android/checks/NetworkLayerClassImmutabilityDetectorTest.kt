@@ -10,9 +10,9 @@ import org.junit.Test
 internal class NetworkLayerClassImmutabilityDetectorTest {
 
     private fun Any.retrofit(): TestFile.BinaryTestFile = bytes(
-            "libs/retrofit-2.7.2.jar",
+            "libs/retrofit-2.9.0.jar",
             javaClass
-                    .getResourceAsStream("/retrofit-2.7.2.jar")
+                    .getResourceAsStream("/retrofit-2.9.0.jar")
                     .readBytes()
     )
 
@@ -78,6 +78,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                 """.trimIndent()
                         )
                 )
+                .allowCompilationErrors()
                 .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
                 .run()
                 .expectClean()
@@ -537,6 +538,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     fun `java file with final`() {
         lint()
                 .files(
+                        retrofit(),
                         java(
                                 """
                 package foo;
@@ -575,6 +577,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     fun `java file with Void`() {
         lint()
                 .files(
+                        retrofit(),
                         java(
                                 """
                 package foo;
@@ -598,6 +601,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     fun `java file generic method with Void`() {
         lint()
                 .files(
+                        retrofit(),
                         java(
                                 """
                 package foo;
@@ -625,6 +629,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     fun `java file without final`() {
         lint()
                 .files(
+                        retrofit(),
                         java(
                                 """
                 package foo;
