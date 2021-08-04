@@ -13,9 +13,16 @@ private val ISSUES_TO_TEST = arrayOf(ISSUE_NETWORK_LAYER_CLASS_JSON_RULE, ISSUE_
 internal class NetworkLayerClassJsonDetectorTest {
 
     private fun retrofit(): TestFile.BinaryTestFile = bytes(
-            "libs/retrofit-2.7.2.jar",
+            "libs/retrofit-2.9.0.jar",
             javaClass
-                    .getResourceAsStream("/retrofit-2.7.2.jar")
+                    .getResourceAsStream("/retrofit-2.9.0.jar")
+                    .readBytes()
+    )
+
+    private fun moshi(): TestFile.BinaryTestFile = bytes(
+            "libs/moshi-1.12.0.jar",
+            javaClass
+                    .getResourceAsStream("/moshi-1.12.0.jar")
                     .readBytes()
     )
 
@@ -464,6 +471,8 @@ internal class NetworkLayerClassJsonDetectorTest {
     fun `java file with Json`() {
         lint()
                 .files(
+                        retrofit(),
+                        moshi(),
                         java(
                                 """
                 package foo;
@@ -501,6 +510,7 @@ internal class NetworkLayerClassJsonDetectorTest {
     fun `java file with Void`() {
         lint()
                 .files(
+                        retrofit(),
                         java(
                                 """
                 package foo;
@@ -524,6 +534,7 @@ internal class NetworkLayerClassJsonDetectorTest {
     fun `java file generic method with Void`() {
         lint()
                 .files(
+                        retrofit(),
                         java(
                                 """
                 package foo;
@@ -551,6 +562,8 @@ internal class NetworkLayerClassJsonDetectorTest {
     fun `java file without Json`() {
         lint()
                 .files(
+                        retrofit(),
+                        moshi(),
                         java(
                                 """
                 package foo;
