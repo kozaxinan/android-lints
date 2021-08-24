@@ -4,10 +4,7 @@ import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Detector.UastScanner
 import com.android.tools.lint.detector.api.JavaContext
-import com.intellij.psi.PsiClassType
-import com.intellij.psi.PsiEnumConstant
-import com.intellij.psi.PsiSubstitutor
-import com.intellij.psi.PsiWildcardType
+import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.kozaxinan.android.checks.RetrofitReturnTypeDetector.Visitor
 import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
@@ -37,14 +34,14 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
     abstract class Visitor(private val context: JavaContext) : UElementHandler() {
 
         private val listOfRetrofitAnnotations = listOf(
-                "retrofit2.http.DELETE",
-                "retrofit2.http.GET",
-                "retrofit2.http.POST",
-                "retrofit2.http.PUT",
-                "DELETE",
-                "GET",
-                "POST",
-                "PUT"
+            "retrofit2.http.DELETE",
+            "retrofit2.http.GET",
+            "retrofit2.http.POST",
+            "retrofit2.http.PUT",
+            "DELETE",
+            "GET",
+            "POST",
+            "PUT"
         )
 
         /**
@@ -65,53 +62,59 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
             val returnType = node.returnType
             return when {
                 node.isSuspend() -> findAllInnerFields(node.parameters.last().type as PsiClassType)
-                returnType is PsiClassType && returnType.isNotUnitOrVoid() -> findAllInnerFields(returnType)
+                returnType is PsiClassType && returnType.isNotUnitOrVoid() ->
+                    findAllInnerFields(returnType)
                 else -> emptyList()
             }
         }
 
         private fun PsiClassType.isNotUnitOrVoid() =
-                !canonicalText.contains("Unit") && !canonicalText.contains("Void")
+            !canonicalText.contains("Unit") && !canonicalText.contains("Void")
 
         private fun hasRetrofitAnnotation(method: UMethod): Boolean {
             return context
-                    .evaluator
-                    .getAllAnnotations(method as UAnnotated, true)
-                    .map { uAnnotation -> uAnnotation.qualifiedName }
-                    .intersect(listOfRetrofitAnnotations)
-                    .isNotEmpty()
+                .evaluator
+                .getAllAnnotations(method as UAnnotated, true)
+                .map { uAnnotation -> uAnnotation.qualifiedName }
+                .intersect(listOfRetrofitAnnotations)
+                .isNotEmpty()
         }
 
         private fun findAllInnerFields(typeRef: PsiClassType): List<UField> {
             val actualReturnType = findGenericClassType(typeRef)
             val typeClass = actualReturnType
-                    .resolve()
-                    .toUElement() as? UClass
-                    ?: return emptyList()
+                .resolve()
+                .toUElement() as? UClass
+                ?: return emptyList()
 
             val innerFields: List<UField> = typeClass
-                    .fields
-                    .filterNot { it.isStatic && it !is PsiEnumConstant }
+                .fields
+                .filterNot { it.isStatic && it !is PsiEnumConstant }
 
             return innerFields +
-                    innerFields
-                            .filterNot { it.isStatic }
-                            .map { it.type }
-                            .filterIsInstance<PsiClassType>()
-                            .map(::findAllInnerFields)
-                            .flatten()
+                innerFields
+                    .filterNot { it.isStatic }
+                    .map { it.type }
+                    .filterIsInstance<PsiClassType>()
+                    .map(::findAllInnerFields)
+                    .flatten()
         }
 
         private fun findGenericClassType(returnType: PsiClassType): PsiClassType {
             val substitutor: PsiSubstitutor = returnType
-                    .resolveGenerics()
-                    .substitutor
+                .resolveGenerics()
+                .substitutor
             return if (substitutor == PsiSubstitutor.EMPTY) {
                 returnType
             } else {
-                when (val psiType = substitutor.substitutionMap.values.first()) {
+                when (val psiType: PsiType = substitutor.substitutionMap.values.first()) {
                     is PsiClassReferenceType -> findGenericClassType(psiType)
-                    is PsiWildcardType -> findGenericClassType(psiType.superBound as PsiClassType)
+                    is PsiWildcardType -> {
+                        when (val superBound: PsiType = psiType.superBound) {
+                            is PsiClassType -> findGenericClassType(superBound)
+                            else -> returnType
+                        }
+                    }
                     else -> returnType
                 }
             }

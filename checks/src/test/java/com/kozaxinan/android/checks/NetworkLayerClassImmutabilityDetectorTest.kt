@@ -30,7 +30,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
                 interface Api {
                 
                   @GET("url") 
-                  fun get(): Dto
+                  suspend fun get(): List<Dto>
                 }
                 """.trimIndent()
                         ),
