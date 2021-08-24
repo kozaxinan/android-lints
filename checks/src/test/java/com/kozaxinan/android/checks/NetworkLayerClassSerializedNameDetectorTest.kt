@@ -17,9 +17,9 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     )
 
     private fun gson(): TestFile.BinaryTestFile = bytes(
-            "libs/gson-2.8.7.jar",
+            "libs/gson-2.8.8.jar",
             javaClass
-                    .getResourceAsStream("/gson-2.8.7.jar")
+                    .getResourceAsStream("/gson-2.8.8.jar")
                     .readBytes()
     )
 
