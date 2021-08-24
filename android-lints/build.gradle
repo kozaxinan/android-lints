@@ -1,5 +1,3 @@
-import org.gradle.api.publish.maven.MavenPublication
-
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 
@@ -18,16 +16,16 @@ android {
 }
 
 afterEvaluate {
-  publishing {
-    publications {
-      release(MavenPublication) {
-        groupId = "com.kozaxinan.android-lints"
-        artifactId = "android-lints"
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId = "com.kozaxinan.android-lints"
+                artifactId = "android-lints"
 
-        from components.release
-      }
+                from components.release
+            }
+        }
     }
-  }
 }
 
 
