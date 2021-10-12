@@ -20,12 +20,16 @@ internal class ImmutableDataClassDetectorTest {
                   data class Dto(
                       val totalResults: Int,
                       val totalNewResults: Int,
-                      val name: String,
+                      private val name: String,
                       val bool: Boolean
                   ) {
                   
+                    val modifiedName: String
+                      get() = name
+                  
                     companion object {
   
+                      @JvmField
                       val EMPTY = Dto(0, 0, "", false)
                     }
                   }

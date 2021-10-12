@@ -9,20 +9,6 @@ import org.junit.Test
 @Suppress("UnstableApiUsage")
 internal class NetworkLayerClassSerializedNameDetectorTest {
 
-    private fun retrofit(): TestFile.BinaryTestFile = bytes(
-            "libs/retrofit-2.9.0.jar",
-            javaClass
-                    .getResourceAsStream("/retrofit-2.9.0.jar")
-                    .readBytes()
-    )
-
-    private fun gson(): TestFile.BinaryTestFile = bytes(
-            "libs/gson-2.8.8.jar",
-            javaClass
-                    .getResourceAsStream("/gson-2.8.8.jar")
-                    .readBytes()
-    )
-
     @Test
     fun `kotlin file with SerializedName`() {
         lint()

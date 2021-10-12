@@ -12,20 +12,6 @@ private val ISSUES_TO_TEST = arrayOf(ISSUE_NETWORK_LAYER_CLASS_JSON_RULE, ISSUE_
 @Suppress("UnstableApiUsage")
 internal class NetworkLayerClassJsonDetectorTest {
 
-    private fun retrofit(): TestFile.BinaryTestFile = bytes(
-            "libs/retrofit-2.9.0.jar",
-            javaClass
-                    .getResourceAsStream("/retrofit-2.9.0.jar")
-                    .readBytes()
-    )
-
-    private fun moshi(): TestFile.BinaryTestFile = bytes(
-            "libs/moshi-1.12.0.jar",
-            javaClass
-                    .getResourceAsStream("/moshi-1.12.0.jar")
-                    .readBytes()
-    )
-
     @Test
     fun `kotlin file with Json`() {
         lint()
