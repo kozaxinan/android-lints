@@ -33,8 +33,8 @@ internal class ImmutableDataClassDetectorTest {
                       val EMPTY = Dto(0, 0, "", false)
                     }
                   }
-                """.trimIndent()
-                        )
+                """
+                        ).indented()
                 )
                 .issues(ISSUE_IMMUTABLE_DATA_CLASS_RULE)
                 .run()
