@@ -1,16 +1,36 @@
 package com.kozaxinan.android.checks
 
-import com.android.tools.lint.checks.infrastructure.TestFiles.java
-import com.android.tools.lint.checks.infrastructure.TestFiles.kotlin
-import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
+import com.android.tools.lint.checks.BuiltinIssueRegistry
+import com.android.tools.lint.checks.infrastructure.LintDetectorTest
+import com.android.tools.lint.detector.api.Detector
+import com.android.tools.lint.detector.api.Issue
 import com.kozaxinan.android.checks.NetworkLayerClassImmutabilityDetector.Companion.ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE
 import org.junit.Test
+import java.util.*
 
 @Suppress("UnstableApiUsage")
-internal class NetworkLayerClassImmutabilityDetectorTest {
+internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
+
+    override fun getIssues(): List<Issue> {
+        val issues: MutableList<Issue> = ArrayList<Issue>()
+        val detectorClass: Class<out Detector?> = detectorInstance.javaClass
+        // Get the list of issues from the registry and filter out others, to make sure
+        // issues are properly registered
+        val candidates = BuiltinIssueRegistry().issues
+        for (issue: Issue in candidates) {
+            if (issue.implementation.detectorClass === detectorClass) {
+                issues.add(issue)
+            }
+        }
+        return issues
+    }
+
+    override fun getDetector(): Detector {
+        return NetworkLayerClassImmutabilityDetector()
+    }
 
     @Test
-    fun `kotlin file with val`() {
+    fun `test kotlin file with val`() {
         lint()
                 .files(
                         retrofit(),
@@ -73,7 +93,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     }
 
     @Test
-    fun `kotlin file with Completable`() {
+    fun `test kotlin file with Completable`() {
         lint()
                 .files(
                         retrofit(),
@@ -99,7 +119,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     }
 
     @Test
-    fun `kotlin file with val and Parcelable`() {
+    fun `test kotlin file with val and Parcelable`() {
         lint()
                 .files(
                         retrofit(),
@@ -154,7 +174,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     }
 
     @Test
-    fun `kotlin file with immutable list`() {
+    fun `test kotlin file with immutable list`() {
         lint()
                 .files(
                         retrofit(),
@@ -187,7 +207,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     }
 
     @Test
-    fun `kotlin file with mutable list`() {
+    fun `test kotlin file with mutable list`() {
         lint()
                 .files(
                         retrofit(),
@@ -227,7 +247,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     }
 
     @Test
-    fun `java file with mutable list`() {
+    fun `test java file with mutable list`() {
         lint()
                 .files(
                         retrofit(),
@@ -263,7 +283,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     }
 
     @Test
-    fun `kotlin enum file with val`() {
+    fun `test kotlin enum file with val`() {
         lint()
                 .files(
                         retrofit(),
@@ -308,7 +328,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     }
 
     @Test
-    fun `kotlin file with var`() {
+    fun `test kotlin file with var`() {
         lint()
                 .files(
                         retrofit(),
@@ -350,7 +370,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     }
 
     @Test
-    fun `kotlin file with var from multiple interface`() {
+    fun `test kotlin file with var from multiple interface`() {
         lint()
                 .allowDuplicates()
                 .files(
@@ -408,7 +428,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     }
 
     @Test
-    fun `kotlin file inner dto with var`() {
+    fun `test kotlin file inner dto with var`() {
         lint()
                 .files(
                         retrofit(),
@@ -458,7 +478,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     }
 
     @Test
-    fun `kotlin file return type generic with var`() {
+    fun `test kotlin file return type generic with var`() {
         lint()
                 .files(
                         retrofit(),
@@ -500,7 +520,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     }
 
     @Test
-    fun `kotlin file return type generic with Unit`() {
+    fun `test kotlin file return type generic with Unit`() {
         lint()
                 .files(
                         retrofit(),
@@ -525,7 +545,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     }
 
     @Test
-    fun `kotlin file with Unit`() {
+    fun `test kotlin file with Unit`() {
         lint()
                 .files(
                         retrofit(),
@@ -549,7 +569,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     }
 
     @Test
-    fun `java file with final`() {
+    fun `test java file with final`() {
         lint()
                 .files(
                         retrofit(),
@@ -588,7 +608,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     }
 
     @Test
-    fun `java file with Void`() {
+    fun `test java file with Void`() {
         lint()
                 .files(
                         retrofit(),
@@ -612,7 +632,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     }
 
     @Test
-    fun `java file generic method with Void`() {
+    fun `test java file generic method with Void`() {
         lint()
                 .files(
                         retrofit(),
@@ -640,7 +660,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest {
     }
 
     @Test
-    fun `java file without final`() {
+    fun `test java file without final`() {
         lint()
                 .files(
                         retrofit(),

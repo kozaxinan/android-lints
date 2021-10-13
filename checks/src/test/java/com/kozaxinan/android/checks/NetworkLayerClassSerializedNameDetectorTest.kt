@@ -1,16 +1,35 @@
 package com.kozaxinan.android.checks
 
-import com.android.tools.lint.checks.infrastructure.TestFile
-import com.android.tools.lint.checks.infrastructure.TestFiles.*
-import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
+import com.android.tools.lint.checks.infrastructure.LintDetectorTest
+import com.android.tools.lint.detector.api.Detector
+import com.android.tools.lint.detector.api.Issue
 import com.kozaxinan.android.checks.NetworkLayerClassSerializedNameDetector.Companion.ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE
 import org.junit.Test
+import java.util.*
 
 @Suppress("UnstableApiUsage")
-internal class NetworkLayerClassSerializedNameDetectorTest {
+internal class NetworkLayerClassSerializedNameDetectorTest : LintDetectorTest() {
+
+    override fun getIssues(): List<Issue> {
+        val issues: MutableList<Issue> = ArrayList<Issue>()
+        val detectorClass: Class<out Detector?> = detectorInstance.javaClass
+        // Get the list of issues from the registry and filter out others, to make sure
+        // issues are properly registered
+        val candidates = IssueRegistry().issues
+        for (issue: Issue in candidates) {
+            if (issue.implementation.detectorClass === detectorClass) {
+                issues.add(issue)
+            }
+        }
+        return issues
+    }
+
+    override fun getDetector(): Detector {
+        return NetworkLayerClassSerializedNameDetector()
+    }
 
     @Test
-    fun `kotlin file with SerializedName`() {
+    fun `test kotlin file with SerializedName`() {
         lint()
                 .files(
                         retrofit(),
@@ -55,7 +74,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     }
 
     @Test
-    fun `kotlin enum file without SerializedName`() {
+    fun `test kotlin enum file without SerializedName`() {
         lint()
                 .files(
                         retrofit(),
@@ -111,7 +130,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     }
 
     @Test
-    fun `kotlin enum with fields file without SerializedName`() {
+    fun `test kotlin enum with fields file without SerializedName`() {
         lint()
                 .files(
                         retrofit(),
@@ -167,7 +186,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     }
 
     @Test
-    fun `kotlin file without SerializedName`() {
+    fun `test kotlin file without SerializedName`() {
         lint()
                 .files(
                         retrofit(),
@@ -212,7 +231,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     }
 
     @Test
-    fun `kotlin file without SerializedName for suspend method`() {
+    fun `test kotlin file without SerializedName for suspend method`() {
         lint()
                 .files(
                         retrofit(),
@@ -257,7 +276,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     }
 
     @Test
-    fun `kotlin file without SerializedName from multiple interface`() {
+    fun `test kotlin file without SerializedName from multiple interface`() {
         lint()
                 .allowDuplicates()
                 .files(
@@ -316,7 +335,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     }
 
     @Test
-    fun `kotlin file inner dto without SerializedName`() {
+    fun `test kotlin file inner dto without SerializedName`() {
         lint()
                 .files(
                         retrofit(),
@@ -367,7 +386,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     }
 
     @Test
-    fun `kotlin file return type generic without SerializedName`() {
+    fun `test kotlin file return type generic without SerializedName`() {
         lint()
                 .files(
                         retrofit(),
@@ -410,7 +429,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     }
 
     @Test
-    fun `kotlin file return type generic with Unit`() {
+    fun `test kotlin file return type generic with Unit`() {
         lint()
                 .files(
                         retrofit(),
@@ -436,7 +455,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     }
 
     @Test
-    fun `kotlin file with Unit`() {
+    fun `test kotlin file with Unit`() {
         lint()
                 .files(
                         retrofit(),
@@ -461,7 +480,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     }
 
     @Test
-    fun `java file with SerializedName`() {
+    fun `test java file with SerializedName`() {
         lint()
                 .files(
                         gson(),
@@ -503,7 +522,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     }
 
     @Test
-    fun `java file with Void`() {
+    fun `test java file with Void`() {
         lint()
                 .files(
                         retrofit(),
@@ -527,7 +546,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     }
 
     @Test
-    fun `java file generic method with Void`() {
+    fun `test java file generic method with Void`() {
         lint()
                 .files(
                         retrofit(),
@@ -555,7 +574,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest {
     }
 
     @Test
-    fun `java file without SerializedName`() {
+    fun `test java file without SerializedName`() {
         lint()
                 .files(
                         gson(),

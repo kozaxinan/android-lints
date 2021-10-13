@@ -1,19 +1,40 @@
 package com.kozaxinan.android.checks
 
+import com.android.tools.lint.checks.BuiltinIssueRegistry
+import com.android.tools.lint.checks.infrastructure.LintDetectorTest
 import com.android.tools.lint.checks.infrastructure.TestFile
-import com.android.tools.lint.checks.infrastructure.TestFiles.*
-import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
+import com.android.tools.lint.detector.api.Detector
+import com.android.tools.lint.detector.api.Issue
 import com.kozaxinan.android.checks.NetworkLayerClassJsonDetector.Companion.ISSUE_NETWORK_LAYER_CLASS_JSON_CLASS_RULE
 import com.kozaxinan.android.checks.NetworkLayerClassJsonDetector.Companion.ISSUE_NETWORK_LAYER_CLASS_JSON_RULE
 import org.junit.Test
+import java.util.*
 
 private val ISSUES_TO_TEST = arrayOf(ISSUE_NETWORK_LAYER_CLASS_JSON_RULE, ISSUE_NETWORK_LAYER_CLASS_JSON_CLASS_RULE)
 
 @Suppress("UnstableApiUsage")
-internal class NetworkLayerClassJsonDetectorTest {
+internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
+
+    override fun getIssues(): List<Issue> {
+        val issues: MutableList<Issue> = ArrayList<Issue>()
+        val detectorClass: Class<out Detector?> = detectorInstance.javaClass
+        // Get the list of issues from the registry and filter out others, to make sure
+        // issues are properly registered
+        val candidates = BuiltinIssueRegistry().issues
+        for (issue: Issue in candidates) {
+            if (issue.implementation.detectorClass === detectorClass) {
+                issues.add(issue)
+            }
+        }
+        return issues
+    }
+
+    override fun getDetector(): Detector {
+        return NetworkLayerClassJsonDetector()
+    }
 
     @Test
-    fun `kotlin file with Json`() {
+    fun `test kotlin file with Json`() {
         lint()
                 .files(
                         retrofit(),
@@ -67,7 +88,7 @@ internal class NetworkLayerClassJsonDetectorTest {
     }
 
     @Test
-    fun `kotlin enum file with JsonClass`() {
+    fun `test kotlin enum file with JsonClass`() {
         lint()
                 .files(
                         retrofit(),
@@ -130,7 +151,7 @@ internal class NetworkLayerClassJsonDetectorTest {
     }
 
     @Test
-    fun `kotlin file without SerializedName`() {
+    fun `test kotlin file without SerializedName`() {
         lint()
                 .files(
                         retrofit(),
@@ -178,7 +199,7 @@ internal class NetworkLayerClassJsonDetectorTest {
     }
 
     @Test
-    fun `kotlin file without SerializedName for suspend method`() {
+    fun `test kotlin file without SerializedName for suspend method`() {
         lint()
                 .files(
                         retrofit(),
@@ -226,7 +247,7 @@ internal class NetworkLayerClassJsonDetectorTest {
     }
 
     @Test
-    fun `kotlin file without SerializedName from multiple interface`() {
+    fun `test kotlin file without SerializedName from multiple interface`() {
         lint()
                 .allowDuplicates()
                 .files(
@@ -292,7 +313,7 @@ internal class NetworkLayerClassJsonDetectorTest {
     }
 
     @Test
-    fun `kotlin file inner dto without SerializedName`() {
+    fun `test kotlin file inner dto without SerializedName`() {
         lint()
                 .files(
                         retrofit(),
@@ -354,7 +375,7 @@ internal class NetworkLayerClassJsonDetectorTest {
     }
 
     @Test
-    fun `kotlin file return type generic without SerializedName`() {
+    fun `test kotlin file return type generic without SerializedName`() {
         lint()
                 .files(
                         retrofit(),
@@ -401,7 +422,7 @@ internal class NetworkLayerClassJsonDetectorTest {
     }
 
     @Test
-    fun `kotlin file return type generic with Unit`() {
+    fun `test kotlin file return type generic with Unit`() {
         lint()
                 .files(
                         retrofit(),
@@ -428,7 +449,7 @@ internal class NetworkLayerClassJsonDetectorTest {
     }
 
     @Test
-    fun `kotlin file with Unit`() {
+    fun `test kotlin file with Unit`() {
         lint()
                 .files(
                         retrofit(),
@@ -454,7 +475,7 @@ internal class NetworkLayerClassJsonDetectorTest {
     }
 
     @Test
-    fun `java file with Json`() {
+    fun `test java file with Json`() {
         lint()
                 .files(
                         retrofit(),
@@ -493,7 +514,7 @@ internal class NetworkLayerClassJsonDetectorTest {
     }
 
     @Test
-    fun `java file with Void`() {
+    fun `test java file with Void`() {
         lint()
                 .files(
                         retrofit(),
@@ -517,7 +538,7 @@ internal class NetworkLayerClassJsonDetectorTest {
     }
 
     @Test
-    fun `java file generic method with Void`() {
+    fun `test java file generic method with Void`() {
         lint()
                 .files(
                         retrofit(),
@@ -545,7 +566,7 @@ internal class NetworkLayerClassJsonDetectorTest {
     }
 
     @Test
-    fun `java file without Json`() {
+    fun `test java file without Json`() {
         lint()
                 .files(
                         retrofit(),
