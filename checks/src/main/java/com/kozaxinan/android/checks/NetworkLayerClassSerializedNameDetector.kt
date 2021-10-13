@@ -9,6 +9,7 @@ import com.android.tools.lint.detector.api.Severity.INFORMATIONAL
 import org.jetbrains.uast.UAnnotated
 import org.jetbrains.uast.UField
 import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.getContainingUClass
 
 /**
  * Check retrotif interface methods return type for SerializedName annotation.
@@ -22,7 +23,7 @@ internal class NetworkLayerClassSerializedNameDetector : RetrofitReturnTypeDetec
 
         override fun visitMethod(node: UMethod) {
             val nonFinalFields = findAllFieldsOf(node)
-                    .filterNot { !it.isStatic && it.containingClass?.isEnum == true }
+                    .filterNot { !it.isStatic && it.getContainingUClass()?.isEnum == true }
                     .filterNot(::hasSerializedNameAnnotation)
                     .map { it.name }
 

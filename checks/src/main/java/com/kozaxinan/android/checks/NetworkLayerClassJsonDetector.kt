@@ -11,6 +11,7 @@ import com.intellij.psi.PsiClass
 import org.jetbrains.uast.UAnnotated
 import org.jetbrains.uast.UField
 import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.getContainingUClass
 
 /**
  * Check retrofit interface methods return type for JsonName and Moshi's Json/JsonClass annotation.
@@ -23,10 +24,10 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
     class NetworkLayerDtoFieldVisitor(private val context: JavaContext) : Visitor(context) {
 
         override fun visitMethod(node: UMethod) {
-            val allFields: List<UField> = findAllFieldsOf(node).filterNot { !it.isStatic && it.containingClass?.isEnum == true }
+            val allFields: List<UField> = findAllFieldsOf(node).filterNot { !it.isStatic && it.getContainingUClass()?.isEnum == true }
 
             val classes: Set<PsiClass> = allFields
-                    .mapNotNull { it.containingClass }
+                    .mapNotNull { it.getContainingUClass() }
                     .toSet()
 
             val checkedFields: MutableList<String?> = allFields

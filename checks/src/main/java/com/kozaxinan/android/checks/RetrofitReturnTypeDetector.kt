@@ -57,7 +57,7 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
          * Empty list if method doesn't belong to retrofit interface or method doesn't have valid return type.
          */
         fun findAllFieldsOf(node: UMethod): List<UField> {
-            if (node.containingClass?.isInterface != true || !hasRetrofitAnnotation(node)) return emptyList()
+            if (node.getContainingUClass()?.isInterface != true || !hasRetrofitAnnotation(node)) return emptyList()
 
             val returnType = node.returnType
             return when {
