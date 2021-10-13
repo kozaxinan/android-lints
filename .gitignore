@@ -69,3 +69,4 @@ mirror/
 /tooling/generated/
 
 gradle/is24.properties
+/checks/lint-report.html
