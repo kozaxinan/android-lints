@@ -18,14 +18,13 @@ dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    compileOnly "com.android.tools.lint:lint-api:30.0.3"
-    compileOnly "com.android.tools.lint:lint-checks:30.0.3"
+    compileOnly "com.android.tools.lint:lint-api:30.1.1"
+    compileOnly "com.android.tools.lint:lint-checks:30.1.1"
 
-    testImplementation "com.android.tools.lint:lint:30.0.3"
-    testImplementation "com.android.tools.lint:lint-tests:30.0.3"
+    testImplementation "com.android.tools.lint:lint:30.1.1"
+    testImplementation "com.android.tools.lint:lint-tests:30.1.1"
     testImplementation "junit:junit:4.13.2"
     testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-//    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
 }
 
 jar {
