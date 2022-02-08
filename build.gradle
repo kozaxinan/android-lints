@@ -17,13 +17,15 @@ buildscript {
     }
 }
 
+plugins {
+    id("com.gradleup.auto.manifest") version "1.0.4"
+}
+
 allprojects {
     repositories {
         google()
     }
 }
-
-apply plugin: 'com.gradleup.auto.manifest'
 
 autoManifest {
     packageName.set("com.kozaxinan")
