@@ -24,7 +24,8 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
     class NetworkLayerDtoFieldVisitor(private val context: JavaContext) : Visitor(context) {
 
         override fun visitMethod(node: UMethod) {
-            val allFields: List<UField> = findAllFieldsOf(node).filterNot { !it.isStatic && it.getContainingUClass()?.isEnum == true }
+            val allFields: List<UField> = findAllReturnTypeFieldsOf(node)
+                .filterNot { !it.isStatic && it.getContainingUClass()?.isEnum == true }
 
             val classes: Set<PsiClass> = allFields
                     .mapNotNull { it.getContainingUClass() }

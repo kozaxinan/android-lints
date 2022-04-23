@@ -32,8 +32,7 @@ internal class NetworkLayerClassSerializedNameDetector : RetrofitReturnTypeDetec
                     issue = ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE,
                     scopeClass = node,
                     location = context.getNameLocation(node),
-                    message = "Return type ${node.returnType} doesn't have @SerializedName annotation for " +
-                        "$nonFinalFields fields."
+                    message = "Return type doesn't have @SerializedName annotation for $nonFinalFields fields."
                 )
             }
 

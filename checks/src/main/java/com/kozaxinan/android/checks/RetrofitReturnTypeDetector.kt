@@ -35,11 +35,11 @@ import org.jetbrains.uast.toUElement
  * for this example, [Visitor.findAllReturnTypeFieldsOf] will return list of UField for the fields of DTO. {a, b}
  */
 @Suppress("UnstableApiUsage")
-internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
+internal open class RetrofitReturnTypeDetector : Detector(), UastScanner {
 
     override fun getApplicableUastTypes(): List<Class<UMethod>> = listOf(UMethod::class.java)
 
-    abstract class Visitor(private val context: JavaContext) : UElementHandler() {
+    open class Visitor(private val context: JavaContext) : UElementHandler() {
 
         private val listOfRetrofitAnnotations = listOf(
             "retrofit2.http.DELETE",
@@ -76,6 +76,7 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
             }
         }
 
+        @Suppress("ReturnCount")
         fun findAllBodyParameterTypeFieldsOf(node: UMethod): Pair<PsiClassType, List<UField>>? {
             if (node.getContainingUClass()?.isInterface != true || !hasRetrofitAnnotation(node)) {
                 return null

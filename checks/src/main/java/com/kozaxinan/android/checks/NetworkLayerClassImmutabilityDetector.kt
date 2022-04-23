@@ -23,7 +23,7 @@ internal class NetworkLayerClassImmutabilityDetector : RetrofitReturnTypeDetecto
 
         override fun visitMethod(node: UMethod) {
 
-            val fields = findAllFieldsOf(node)
+            val fields = findAllReturnTypeFieldsOf(node)
 
             val nonFinalFields = fields.filterNot { it.hasModifierProperty(PsiModifier.FINAL) }
             if (nonFinalFields.isNotEmpty()) {
