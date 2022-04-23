@@ -4,12 +4,20 @@ import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Detector.UastScanner
 import com.android.tools.lint.detector.api.JavaContext
-import com.intellij.psi.*
+import com.intellij.psi.PsiClassType
+import com.intellij.psi.PsiEnumConstant
+import com.intellij.psi.PsiSubstitutor
+import com.intellij.psi.PsiType
+import com.intellij.psi.PsiWildcardType
 import com.intellij.psi.impl.source.PsiClassReferenceType
-import com.kozaxinan.android.checks.RetrofitReturnTypeDetector.Visitor
 import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.uast.*
+import org.jetbrains.uast.UAnnotated
+import org.jetbrains.uast.UClass
+import org.jetbrains.uast.UField
+import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.getContainingUClass
+import org.jetbrains.uast.toUElement
 
 /**
  * Parent class for finding fields of return type of and Retrofit interface method.
@@ -24,7 +32,7 @@ import org.jetbrains.uast.*
  *
  * class Dto(val a, val b)
  *
- * for this example, [Visitor.findAllFieldsOf] will return list of UField for the fields of DTO. {a, b}
+ * for this example, [Visitor.findAllReturnTypeFieldsOf] will return list of UField for the fields of DTO. {a, b}
  */
 @Suppress("UnstableApiUsage")
 internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
@@ -46,7 +54,7 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
 
         /**
          * Return all field of return type of a retrofit interface method.
-         * Returned list is include recursive fields of complex classes and type information of genetic classes.
+         * Returned list is include recursive fields of complex classes and type information of generic classes.
          *
          * Unit and Void return types are ignored.
          *
@@ -56,7 +64,7 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
          * @return A list of fields of return type of method.
          * Empty list if method doesn't belong to retrofit interface or method doesn't have valid return type.
          */
-        fun findAllFieldsOf(node: UMethod): List<UField> {
+        fun findAllReturnTypeFieldsOf(node: UMethod): List<UField> {
             if (node.getContainingUClass()?.isInterface != true || !hasRetrofitAnnotation(node)) return emptyList()
 
             val returnType = node.returnType
@@ -66,6 +74,22 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
                     findAllInnerFields(returnType)
                 else -> emptyList()
             }
+        }
+
+        fun findAllBodyParameterTypeFieldsOf(node: UMethod): Pair<PsiClassType, List<UField>>? {
+            if (node.getContainingUClass()?.isInterface != true || !hasRetrofitAnnotation(node)) {
+                return null
+            }
+
+            node.parameterList.parameters.forEach { parameter ->
+                if (parameter.annotations.any { it.qualifiedName == "retrofit2.http.Body" }) {
+                    return (parameter.type as? PsiClassType)?.let {
+                        it to findAllInnerFields(it)
+                    }
+                }
+            }
+
+            return null
         }
 
         private fun PsiClassType.isNotUnitOrVoid() =
