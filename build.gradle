@@ -49,6 +49,13 @@ tasks.named("dependencyUpdates").configure {
     }
 }
 
+subprojects {
+    apply plugin: 'io.gitlab.arturbosch.detekt'
+    detekt {
+        reports.html.enabled = true
+    }
+}
+
 wrapper {
     gradleVersion = '7.4.2'
     distributionType = Wrapper.DistributionType.BIN

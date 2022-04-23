@@ -20,3 +20,25 @@ jobs:
 
       - name: Run build
         run: ./gradlew build --stacktrace
+  detekt:
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Cache Gradle Files
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches/
+            ~/.gradle/wrapper/
+          key: cache-gradle
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+      - name: Run detektMain
+        run: ./gradlew detektMain
+      - name: Stop Gradle
+        run: ./gradlew --stop
