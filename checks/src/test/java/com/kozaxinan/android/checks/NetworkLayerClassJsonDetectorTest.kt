@@ -90,6 +90,61 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
     }
 
     @Test
+    fun `test kotlin file with Json that has nested objects`() {
+        lint()
+            .files(
+                retrofit(),
+                jsonAnnotation(),
+                jsonClassAnnotation(),
+                kotlin(
+                    """
+                package foo
+                
+                import retrofit2.http.GET
+                
+                internal interface Api {
+                
+                  @GET("url") 
+                  suspend fun get(): Dto
+                }
+                """.trimIndent()
+                ),
+                kotlin(
+                    """
+                package foo
+                
+                import com.squareup.moshi.Json
+                import com.squareup.moshi.JsonClass
+                
+                @JsonClass(generateAdapter = true)
+                data class Dto constructor(
+                    @Json(name = "totalResults") val totalResults: Int,
+                    @Json(name = "totalNewResults") @Deprecated
+                    val totalNewResults: Int,
+                    @Json(name = "name") val name: String,
+                    @Json(name = "bool") val bools: List<Boolean>?,
+                    @Json(name = "dto") val dtos: List<Dto>?,
+                ) {
+                
+                  companion object {
+
+                    val EMPTY = Dto(0, 0, "", false)
+                    
+                    val mapping: Map<String, String> = mapOf(
+                      "x" to "x",
+                      "y" to "y"
+                    )
+                  }
+                }
+                """.trimIndent()
+                )
+            )
+            .issues(*ISSUES_TO_TEST)
+            .run()
+            .expectClean()
+    }
+
+    @Test
     fun `test kotlin enum file with JsonClass`() {
         lint()
             .files(
@@ -148,6 +203,56 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                     ~~~
               0 errors, 0 warnings
             """
+            )
+    }
+
+    @Test
+    fun `test suspending list wrapped in a response`() {
+        lint()
+            .files(
+                retrofit(),
+                jsonAnnotation(),
+                jsonClassAnnotation(),
+                kotlin(
+                    """
+                package foo
+
+                import retrofit2.http.GET
+                import retrofit2.Response
+
+                interface Api {
+
+                  @GET("url")
+                  suspend fun get(): Response<List<Dto>>
+                }
+                """.trimIndent()
+                ),
+                kotlin(
+                    """
+                package foo
+
+                import com.squareup.moshi.JsonClass
+                
+                @JsonClass(generateAdapter = true)
+                data class Dto(
+                  val myEnums: List<EnumType>?
+                )
+
+                enum class EnumType {
+                  FIRST,
+                  SECOND
+                }
+
+                """.trimIndent()
+                )
+            )
+            .issues(ISSUE_NETWORK_LAYER_CLASS_JSON_CLASS_RULE)
+            .run()
+            .expect(
+                """src/foo/Api.kt:9: Information: Return type doesn't have @JsonClass annotation for [EnumType] classes [NetworkLayerClassJsonClassRule]
+  suspend fun get(): Response<List<Dto>>
+              ~~~
+0 errors, 0 warnings""".trimIndent()
             )
     }
 
