@@ -84,12 +84,18 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
                 .isNotEmpty()
         }
 
-        private fun findAllInnerFields(typeRef: PsiClassType): Set<UField> {
+        private fun findAllInnerFields(typeRef: PsiClassType, visitedTypes: MutableSet<PsiClassType> = mutableSetOf()): Set<UField> {
             val actualReturnType = findGenericClassType(typeRef)
             val typeClass = actualReturnType
                 .resolve()
                 .toUElement() as? UClass
                 ?: return emptySet()
+
+
+            if (visitedTypes.contains(actualReturnType)) {
+                return setOf()
+            }
+            visitedTypes.add(actualReturnType)
 
             val innerFields: Set<UField> = typeClass
                 .fields
@@ -101,7 +107,8 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
                         .filterNot { it.isStatic }
                         .map { it.type }
                         .filterIsInstance<PsiClassType>()
-                        .map(::findAllInnerFields)
+                        .filterNot { visitedTypes.contains(it) }
+                        .map { innerTypeRef -> findAllInnerFields(innerTypeRef, visitedTypes) }
                         .flatten()
                         .toSet()
         }
@@ -113,15 +120,21 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
             return if (substitutor == PsiSubstitutor.EMPTY) {
                 returnType
             } else {
-                when (val psiType: PsiType = substitutor.substitutionMap.values.first()) {
+                when (val psiType: PsiType? = substitutor.substitutionMap.values.first()) {
                     is PsiClassReferenceType -> findGenericClassType(psiType)
                     is PsiWildcardType -> {
-                        when (val superBound: PsiType = psiType.superBound) {
-                            is PsiClassType -> findGenericClassType(superBound)
-                            else -> returnType
+                        when {
+                            psiType.isSuper -> {
+                                findGenericClassType(psiType.superBound as PsiClassType)
+                            }
+                            psiType.isExtends -> {
+                                findGenericClassType(psiType.extendsBound as PsiClassType)
+                            }
+                            else -> {
+                                returnType
+                            }
                         }
                     }
-
                     else -> returnType
                 }
             }
