@@ -7,7 +7,7 @@ Custom set of android lints rules.
 Kotlin data classes should be immutable by design. Having var in a data class is code smell. Use copy() method when instance needs to be modified.
 
 ### NetworkLayerImmutableClassRule - Warning
-Classes used in network layer should be immutable by design. This lint checks Retrofit interface methods' return type for immutability. Java classes need to have final fields and kotlin data classes needs to have only var fields.
+Classes used in network layer should be immutable by design. This lint checks Retrofit interface methods' return type for immutability. Java classes need to have final fields and kotlin data classes need to have only val fields.
 
 If you want to use this rule, please configure you lint.xml.
 ```
