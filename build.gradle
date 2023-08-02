@@ -10,35 +10,17 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:7.1.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
-        classpath 'com.gradleup:auto-manifest-plugin:1.0.4'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
 }
 
-plugins {
-    id("com.gradleup.auto.manifest") version "1.0.4"
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-autoManifest {
-    packageName.set("com.kozaxinan")
-    replaceDashesWithDot = true
-}
-
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }
 
 wrapper {
-    gradleVersion = '7.4'
+    gradleVersion = '8.2.1'
     distributionType = Wrapper.DistributionType.BIN
 }

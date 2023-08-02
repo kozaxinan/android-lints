@@ -4,15 +4,18 @@ apply plugin: 'maven-publish'
 group = 'com.kozaxinan.android-lints'
 
 android {
-    compileSdkVersion 31
+    namespace = "com.kozaxinan.android.lints"
+
+    compileSdk 33
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 19
     }
 
     buildFeatures {
         buildConfig = false
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
