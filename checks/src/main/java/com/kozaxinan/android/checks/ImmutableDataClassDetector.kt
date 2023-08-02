@@ -23,42 +23,48 @@ internal class ImmutableDataClassDetector : Detector(), UastScanner {
         override fun visitClass(node: UClass) {
             if (node !is KotlinUClass) return
 
-            val containsEqualHashCode = node.methods
-                    .map { it.name }
-                    .containsAll(listOf("equals", "hashCode"))
+            val containsEqualHashCode = node
+                .methods
+                .map { it.name }
+                .containsAll(listOf("equals", "hashCode"))
 
             if (containsEqualHashCode) {
                 val fields = node
-                        .allFields
-                        .filterIsInstance<KtLightField>()
+                    .allFields
+                    .filterIsInstance<KtLightField>()
 
                 checkFields(node, fields)
             }
         }
 
         private fun checkFields(node: KotlinUClass, fields: List<KtLightField>) {
-
             val nonFinalFieldNames = fields
-                    .filterNot { it.hasModifierProperty(PsiModifier.FINAL) }
-                    .map { it.name }
+                .filterNot { it.hasModifierProperty(PsiModifier.FINAL) }
+                .map { it.name }
             if (nonFinalFieldNames.isNotEmpty()) {
                 report(node, "$nonFinalFieldNames are var. $nonFinalFieldNames need to be val.")
             }
 
             val mutableFieldNames = fields
-                    .filter { it.text.contains("Mutable") }
-                    .map { it.name }
+                .filter {
+                    it.text.contains("Mutable") ||
+                            it.kotlinTypeName()?.contains("Mutable") ?: false
+                }
+                .map { it.name }
             if (mutableFieldNames.isNotEmpty()) {
-                report(node, "Return type of $mutableFieldNames are not immutable. $mutableFieldNames need to be immutable class.")
+                report(
+                    node,
+                    "Return type of $mutableFieldNames are not immutable. $mutableFieldNames need to be immutable class."
+                )
             }
         }
 
         private fun report(node: KotlinUClass, message: String) {
             context.report(
-                    issue = ISSUE_IMMUTABLE_DATA_CLASS_RULE,
-                    scopeClass = node,
-                    location = context.getNameLocation(node),
-                    message = message
+                issue = ISSUE_IMMUTABLE_DATA_CLASS_RULE,
+                scopeClass = node,
+                location = context.getNameLocation(node),
+                message = message
             )
         }
     }
@@ -66,13 +72,16 @@ internal class ImmutableDataClassDetector : Detector(), UastScanner {
     companion object {
 
         val ISSUE_IMMUTABLE_DATA_CLASS_RULE: Issue = Issue.create(
-                id = "ImmutableDataClassRule",
-                briefDescription = "Immutable kotlin data class",
-                explanation = "Kotlin data classes should be immutable by design. Use copy() method when instance needs to be modified.",
-                category = Category.CORRECTNESS,
-                priority = 7,
-                severity = Severity.WARNING,
-                implementation = Implementation(ImmutableDataClassDetector::class.java, Scope.JAVA_FILE_SCOPE)
+            id = "ImmutableDataClassRule",
+            briefDescription = "Immutable kotlin data class",
+            explanation = "Kotlin data classes should be immutable by design. Use copy() method when instance needs to be modified.",
+            category = Category.CORRECTNESS,
+            priority = 7,
+            severity = Severity.WARNING,
+            implementation = Implementation(
+                ImmutableDataClassDetector::class.java,
+                Scope.JAVA_FILE_SCOPE
+            )
         )
     }
 }

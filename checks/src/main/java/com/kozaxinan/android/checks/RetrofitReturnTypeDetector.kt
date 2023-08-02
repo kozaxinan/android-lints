@@ -56,15 +56,16 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
          * @return A list of fields of return type of method.
          * Empty list if method doesn't belong to retrofit interface or method doesn't have valid return type.
          */
-        fun findAllFieldsOf(node: UMethod): List<UField> {
-            if (node.getContainingUClass()?.isInterface != true || !hasRetrofitAnnotation(node)) return emptyList()
+        fun findAllFieldsOf(node: UMethod): Set<UField> {
+            if (node.getContainingUClass()?.isInterface != true || !hasRetrofitAnnotation(node)) return emptySet()
 
             val returnType = node.returnType
             return when {
                 node.isSuspend() -> findAllInnerFields(node.parameters.last().type as PsiClassType)
                 returnType is PsiClassType && returnType.isNotUnitOrVoid() ->
                     findAllInnerFields(returnType)
-                else -> emptyList()
+
+                else -> emptySet()
             }
         }
 
@@ -80,24 +81,26 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
                 .isNotEmpty()
         }
 
-        private fun findAllInnerFields(typeRef: PsiClassType): List<UField> {
+        private fun findAllInnerFields(typeRef: PsiClassType): Set<UField> {
             val actualReturnType = findGenericClassType(typeRef)
             val typeClass = actualReturnType
                 .resolve()
                 .toUElement() as? UClass
-                ?: return emptyList()
+                ?: return emptySet()
 
-            val innerFields: List<UField> = typeClass
+            val innerFields: Set<UField> = typeClass
                 .fields
                 .filterNot { it.isStatic && it !is PsiEnumConstant }
+                .toSet()
 
             return innerFields +
-                innerFields
-                    .filterNot { it.isStatic }
-                    .map { it.type }
-                    .filterIsInstance<PsiClassType>()
-                    .map(::findAllInnerFields)
-                    .flatten()
+                    innerFields
+                        .filterNot { it.isStatic }
+                        .map { it.type }
+                        .filterIsInstance<PsiClassType>()
+                        .map(::findAllInnerFields)
+                        .flatten()
+                        .toSet()
         }
 
         private fun findGenericClassType(returnType: PsiClassType): PsiClassType {
@@ -115,6 +118,7 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
                             else -> returnType
                         }
                     }
+
                     else -> returnType
                 }
             }
