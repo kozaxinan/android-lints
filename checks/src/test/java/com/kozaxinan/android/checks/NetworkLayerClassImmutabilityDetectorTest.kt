@@ -111,8 +111,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   @GET("url") 
                   fun get(): Completable
                 }
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
             .run()
@@ -137,8 +137,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   @GET("url") 
                   fun get(): ResponseBody
                 }
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
             .run()
@@ -161,8 +161,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   @GET("url") 
                   fun get(): Dto
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 kotlin(
                     """
                 package foo
@@ -192,8 +192,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                     }
                   }
                 }
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
             .run()
@@ -216,8 +216,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   @GET("url") 
                   fun get(): Dto
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 kotlin(
                     """
                 package foo
@@ -225,8 +225,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                 data class Dto(
                     val list: List<String>
                 )
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
             .run()
@@ -249,17 +249,17 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   @GET("url") 
                   fun get(): Dto
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 kotlin(
                     """
-                package foo
-                
-                data class Dto(
-                    val list: MutableList<String>
-                )
-                """.trimIndent()
-                )
+                    package foo
+                    
+                    data class Dto(
+                        val list: MutableList<String>
+                    )
+                """
+                ).indented()
             )
             .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
             .run()
@@ -269,7 +269,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                 fun get(): Dto
                     ~~~
               1 errors, 0 warnings
-            """.trimIndent()
+            """
             )
     }
 
@@ -289,7 +289,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                     @GET("url") 
                     Dto get();
                   }
-                """.trimIndent()
+                """
                 ),
                 java(
                     """
@@ -301,7 +301,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   
                     public final List<String> list;
                   }
-                """.trimIndent()
+                """
                 )
             )
             .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
@@ -325,8 +325,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   @GET("url") 
                   fun get(): Dto
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 kotlin(
                     """
                 package foo
@@ -336,8 +336,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                     val type: PremiumType,
                     val name: String
                 )
-                """.trimIndent()
-                ),
+                """
+                ).indented().indented(),
                 kotlin(
                     """
                 package foo
@@ -346,8 +346,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   SCHUFA,
                   ARVATO;
                 }
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
             .run()
@@ -370,8 +370,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   @GET("url") 
                   fun get(): Dto
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 kotlin(
                     """
                 package foo
@@ -381,8 +381,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                     var totalNewResults: Int,
                     val name: String
                 )
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
             .run()
@@ -392,7 +392,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                 fun get(): Dto
                     ~~~
               1 errors, 0 warnings
-            """.trimIndent()
+            """
             )
     }
 
@@ -413,8 +413,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   @GET("url") 
                   fun get(): Dto
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 kotlin(
                     """
                 package foo
@@ -426,8 +426,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   @GET("url2") 
                   fun get2(): Dto
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 kotlin(
                     """
                 package foo
@@ -436,8 +436,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                     val totalResults: Int,
                     var totalNewResults: Int
                 )
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
             .run()
@@ -450,7 +450,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                 fun get2(): Dto
                     ~~~~
               2 errors, 0 warnings
-            """.trimIndent()
+            """
             )
     }
 
@@ -470,8 +470,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   @GET("url") 
                   fun get(): Dto
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 kotlin(
                     """
                 package foo
@@ -480,8 +480,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                     val totalResults: Int,
                     var innerDto: InnerDto
                 )
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 kotlin(
                     """
                 package foo
@@ -489,8 +489,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                 class InnerDto(
                     var innerResults: Int
                 )
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
             .run()
@@ -500,7 +500,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                 fun get(): Dto
                     ~~~
               1 errors, 0 warnings
-            """.trimIndent()
+            """
             )
     }
 
@@ -521,8 +521,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   @GET("url") 
                   fun get(): Call<List<Dto>>
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 kotlin(
                     """
                 package foo
@@ -531,8 +531,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                     val totalResults: Int,
                     var totalNewResults: Int
                 )
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
             .run()
@@ -542,7 +542,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                 fun get(): Call<List<Dto>>
                     ~~~
               1 errors, 0 warnings
-            """.trimIndent()
+            """
             )
     }
 
@@ -563,8 +563,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   @GET("url") 
                   fun get(): Call<List<Unit>>
                 }
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
             .run()
@@ -587,8 +587,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   @GET("url") 
                   fun get(): Unit
                 }
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
             .run()
@@ -611,7 +611,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   @GET("url") 
                   Dto get();
                 }
-                """.trimIndent()
+                """
                 ),
                 java(
                     """
@@ -626,7 +626,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                       this.totalNewResults = totalNewResults;
                     }
                 }
-                """.trimIndent()
+                """
                 )
             )
             .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
@@ -650,7 +650,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   @GET("url") 
                   Void get();
                 }
-                """.trimIndent()
+                """
                 )
             )
             .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
@@ -678,7 +678,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   @GET("url") 
                   Call<Void> get2();
                 }
-                """.trimIndent()
+                """
                 )
             )
             .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
@@ -705,8 +705,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                   @GET("url") 
                   Dto get2();
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 java(
                     """
                 package foo;
@@ -725,8 +725,8 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                       this.totalNewResults = totalNewResults;
                     }
                 }
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
             .run()
@@ -739,7 +739,7 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
                 Dto get2();
                     ~~~~
               2 errors, 0 warnings
-            """.trimIndent()
+            """
             )
     }
 }

@@ -49,16 +49,16 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
             .files(
                 kotlin(
                     """
-                  package foo
-                  
-                  data class Dto(
-                      val totalResults: Int,
-                      var totalNewResults: Int,
-                      var name: String,
-                      val bool: Boolean
-                  )
-                """.trimIndent()
-                )
+                      package foo
+                      
+                      data class Dto(
+                          val totalResults: Int,
+                          var totalNewResults: Int,
+                          var name: String,
+                          val bool: Boolean
+                      )
+                """
+                ).indented()
             )
             .issues(ISSUE_IMMUTABLE_DATA_CLASS_RULE)
             .run()
@@ -68,7 +68,7 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
               data class Dto(
                          ~~~
               0 errors, 1 warnings
-            """.trimIndent()
+            """
             )
     }
 
@@ -84,8 +84,8 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
                       val totalResults: Int,
                       val list: MutableList<String>
                   )
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(ISSUE_IMMUTABLE_DATA_CLASS_RULE)
             .run()
@@ -95,7 +95,7 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
               data class Dto(
                          ~~~
               0 errors, 1 warnings
-            """.trimIndent()
+            """
             )
     }
 
@@ -111,7 +111,7 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
                       val totalResults: Int,
                       val list: List<String>
                   )
-                """.trimIndent()
+                """
                 )
             )
             .issues(ISSUE_IMMUTABLE_DATA_CLASS_RULE)
@@ -131,8 +131,8 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
                       val totalResults: Int,
                       val map: MutableMap<String, String>
                   )
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(ISSUE_IMMUTABLE_DATA_CLASS_RULE)
             .run()
@@ -142,7 +142,7 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
               data class Dto(
                          ~~~
               0 errors, 1 warnings
-            """.trimIndent()
+            """
             )
     }
 
@@ -158,7 +158,7 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
                       val totalResults: Int,
                       val map: Map<String, String>
                   )
-                """.trimIndent()
+                """
                 )
             )
             .issues(ISSUE_IMMUTABLE_DATA_CLASS_RULE)
@@ -177,7 +177,7 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
                   class Dto(
                       var totalResults: Int
                   )
-                """.trimIndent()
+                """
                 )
             )
             .issues(ISSUE_IMMUTABLE_DATA_CLASS_RULE)
@@ -196,7 +196,7 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
                   class Dto {
                     public int totalResults;
                   }
-                """.trimIndent()
+                """
                 )
             )
             .issues(ISSUE_IMMUTABLE_DATA_CLASS_RULE)
@@ -222,8 +222,8 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
                       return false
                     }
                   }
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(ISSUE_IMMUTABLE_DATA_CLASS_RULE)
             .run()
@@ -233,7 +233,7 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
               class Dto(var totalResults: Int) {
                     ~~~
               0 errors, 1 warnings
-            """.trimIndent()
+            """
             )
     }
 

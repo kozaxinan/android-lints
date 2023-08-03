@@ -41,7 +41,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
             .files(
                 retrofit(),
                 jsonAnnotation(),
-                jsonClassAnnotation(),
+                jsonClassAnnotation().indented(),
                 kotlin(
                     """
                 package foo
@@ -53,8 +53,8 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                   @GET("url") 
                   suspend fun get(): Dto
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 kotlin(
                     """
                 package foo
@@ -81,7 +81,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                     )
                   }
                 }
-                """.trimIndent()
+                """
                 )
             )
             .issues(*ISSUES_TO_TEST)
@@ -95,7 +95,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
             .files(
                 retrofit(),
                 jsonAnnotation(),
-                jsonClassAnnotation(),
+                jsonClassAnnotation().indented(),
                 kotlin(
                     """
                 package foo
@@ -107,8 +107,8 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                   @GET("url")
                   fun get(): Dto
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 kotlin(
                     """
                 package foo
@@ -133,11 +133,10 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                       ARVATO
                     }
                 }
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(*ISSUES_TO_TEST)
-//            .testModes(TestMode.TYPE_ALIAS)
             .run()
             .expect(
                 """
@@ -148,7 +147,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                 fun get(): Dto
                     ~~~
               0 errors, 0 warnings
-            """.trimIndent()
+            """
             )
     }
 
@@ -170,8 +169,8 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                   @GET("url")
                   fun get(): Dto
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 kotlin(
                     """
                 package foo
@@ -185,8 +184,8 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                     val totalNewResults: Int,
                     @Json(name = "name") val name: String
                 )
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(*ISSUES_TO_TEST)
             .run()
@@ -196,7 +195,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
               fun get(): Dto
                   ~~~
             0 errors, 0 warnings
-            """.trimIndent()
+            """
             )
     }
 
@@ -206,7 +205,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
             .files(
                 retrofit(),
                 jsonAnnotation(),
-                jsonClassAnnotation(),
+                jsonClassAnnotation().indented(),
                 kotlin(
                     """
                 package foo
@@ -218,8 +217,8 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                   @GET("url")
                   suspend fun get(some:String, iasda: Int): Dto
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 kotlin(
                     """
                 package foo
@@ -233,8 +232,8 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                     val totalNewResults: Int,
                     @Json(name = "name") val name: String
                 )
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(*ISSUES_TO_TEST)
             .run()
@@ -244,7 +243,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                 suspend fun get(some:String, iasda: Int): Dto
                             ~~~
               0 errors, 0 warnings
-            """.trimIndent()
+            """
             )
     }
 
@@ -255,7 +254,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
             .files(
                 retrofit(),
                 jsonAnnotation(),
-                jsonClassAnnotation(),
+                jsonClassAnnotation().indented(),
                 kotlin(
                     """
                 package foo
@@ -267,8 +266,8 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                   @GET("url")
                   fun get(): Dto
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented().indented(),
                 kotlin(
                     """
                 package foo
@@ -280,8 +279,8 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                   @GET("url2")
                   fun get2(): Dto
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented().indented(),
                 kotlin(
                     """
                 package foo
@@ -290,8 +289,8 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                     val totalResults: Int,
                     val totalNewResults: Int
                 )
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(*ISSUES_TO_TEST)
             .run()
@@ -310,7 +309,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                 fun get2(): Dto
                     ~~~~
               0 errors, 0 warnings
-            """.trimIndent()
+            """
             )
     }
 
@@ -320,7 +319,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
             .files(
                 retrofit(),
                 jsonAnnotation(),
-                jsonClassAnnotation(),
+                jsonClassAnnotation().indented(),
                 kotlin(
                     """
                 package foo
@@ -332,8 +331,8 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                   @GET("url")
                   fun get(): Dto
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 kotlin(
                     """
                 package foo
@@ -346,8 +345,8 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                     @Json(name = "totalResults") val totalResults: Int,
                     @Json(name = "innerDto") var innerDto: InnerDto
                 )
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 kotlin(
                     """
                 package foo
@@ -358,8 +357,8 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                 class InnerDto(
                     var innerResults: Int
                 )
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(*ISSUES_TO_TEST)
             .run()
@@ -372,7 +371,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                 fun get(): Dto
                     ~~~
               0 errors, 0 warnings
-            """.trimIndent()
+            """
             )
     }
 
@@ -382,7 +381,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
             .files(
                 retrofit(),
                 jsonAnnotation(),
-                jsonClassAnnotation(),
+                jsonClassAnnotation().indented(),
                 kotlin(
                     """
                 package foo
@@ -395,8 +394,8 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                   @GET("url")
                   fun get(): Call<List<Dto>>
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 kotlin(
                     """
                 package foo
@@ -405,8 +404,8 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                     val totalResults: Int,
                     val totalNewResults: Int
                 )
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(*ISSUES_TO_TEST)
             .run()
@@ -419,7 +418,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                 fun get(): Call<List<Dto>>
                     ~~~
               0 errors, 0 warnings
-            """.trimIndent()
+            """
             )
     }
 
@@ -429,7 +428,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
             .files(
                 retrofit(),
                 jsonAnnotation(),
-                jsonClassAnnotation(),
+                jsonClassAnnotation().indented(),
                 kotlin(
                     """
                 package foo
@@ -442,7 +441,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                   @GET("url")
                   fun get(): Call<List<Unit>>
                 }
-                """.trimIndent()
+                """
                 )
             )
             .issues(*ISSUES_TO_TEST)
@@ -456,7 +455,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
             .files(
                 retrofit(),
                 jsonAnnotation(),
-                jsonClassAnnotation(),
+                jsonClassAnnotation().indented(),
                 kotlin(
                     """
                 package foo
@@ -468,7 +467,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                   @GET("url")
                   fun get(): Unit
                 }
-                """.trimIndent()
+                """
                 )
             )
             .issues(*ISSUES_TO_TEST)
@@ -493,7 +492,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                   @GET("url")
                   Dto get();
                 }
-                """.trimIndent()
+                """
                 ),
                 java(
                     """
@@ -507,7 +506,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                     @Json(name = "a") final int totalResults;
                     @Json(name = "b") final int totalNewResults;
                 }
-                """.trimIndent()
+                """
                 )
             )
             .issues(*ISSUES_TO_TEST)
@@ -531,7 +530,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                   @GET("url")
                   Void get();
                 }
-                """.trimIndent()
+                """
                 )
             )
             .issues(*ISSUES_TO_TEST)
@@ -559,7 +558,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                   @GET("url")
                   Call<Void> get2();
                 }
-                """.trimIndent()
+                """
                 )
             )
             .issues(*ISSUES_TO_TEST)
@@ -587,8 +586,8 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                   @GET("url")
                   Dto get2();
                 }
-                """.trimIndent()
-                ),
+                """
+                ).indented(),
                 java(
                     """
                 package foo;
@@ -610,8 +609,8 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                       this.totalNewResults = totalNewResults;
                     }
                 }
-                """.trimIndent()
-                )
+                """
+                ).indented()
             )
             .issues(*ISSUES_TO_TEST)
             .run()
@@ -630,7 +629,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                 Dto get2();
                     ~~~~
               0 errors, 0 warnings
-            """.trimIndent()
+            """
             )
     }
 
@@ -651,7 +650,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
           public @interface Json {
             String name();
           }
-        """.trimIndent()
+        """
         )
     }
 
@@ -672,7 +671,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
             boolean generateAdapter();
             String generator() default "";
           }
-        """.trimIndent()
+        """
         )
     }
 }
