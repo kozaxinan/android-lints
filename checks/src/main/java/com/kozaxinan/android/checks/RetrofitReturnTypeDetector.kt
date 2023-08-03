@@ -62,6 +62,7 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
             val returnType = node.returnType
             return when {
                 node.isSuspend() -> findAllInnerFields(node.parameters.last().type as PsiClassType)
+                returnType is PsiClassType && returnType.isResponseBody() -> emptySet()
                 returnType is PsiClassType && returnType.isNotUnitOrVoid() ->
                     findAllInnerFields(returnType)
 
@@ -71,6 +72,8 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
 
         private fun PsiClassType.isNotUnitOrVoid() =
             !canonicalText.contains("Unit") && !canonicalText.contains("Void")
+
+        private fun PsiClassType.isResponseBody() = canonicalText.contains("ResponseBody")
 
         private fun hasRetrofitAnnotation(method: UMethod): Boolean {
             return context

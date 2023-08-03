@@ -120,6 +120,32 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
     }
 
     @Test
+    fun `test kotlin file with RetrofitBody`() {
+        lint()
+            .files(
+                retrofit(),
+                rxjava(),
+                kotlin(
+                    """
+                package foo
+                
+                import io.reactivex.Completable
+                import retrofit2.http.GET
+                
+                interface Api {
+                
+                  @GET("url") 
+                  fun get(): ResponseBody
+                }
+                """.trimIndent()
+                )
+            )
+            .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+            .run()
+            .expectClean()
+    }
+
+    @Test
     fun `test kotlin file with val and Parcelable`() {
         lint()
             .files(
