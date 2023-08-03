@@ -6,7 +6,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "logistics-rider-app-android"
-
 include ':android-lints'
 include ':checks'
