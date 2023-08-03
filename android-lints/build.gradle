@@ -32,7 +32,7 @@ android {
 publishing {
     publications {
         release(MavenPublication) {
-            groupId = "com.kozaxinan.android-lints"
+            groupId = "com.github.kozaxinan"
             artifactId = "android-lints"
 
             afterEvaluate {
@@ -43,6 +43,5 @@ publishing {
 }
 
 dependencies {
-    implementation project(':checks')
     lintPublish project(':checks')
 }
