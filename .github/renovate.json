@@ -1,0 +1,53 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard"
+  ],
+  "schedule": [
+    "before 8am on Monday",
+    "before 8am on Tuesday",
+    "before 8am on Wednesday",
+    "before 8am on Thursday",
+    "before 8am on Friday"
+  ],
+  "baseBranches": ["dependency-updates"],
+  "assigneesFromCodeOwners": true,
+  "reviewersFromCodeOwners": true,
+  "automerge": false,
+  "timezone": "Europe/Berlin",
+  "commitMessagePrefix": "[DEPENDENCY]:",
+  "dependencyDashboard": true,
+  "prConcurrentLimit": 3,
+  "pruneStaleBranches": false,
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "enabled": true
+  },
+  "labels": ["dependency"],
+  "prHourlyLimit": 2,
+  "packageRules": [
+    {
+      "matchPackagePatterns": [
+        "androidx.compose.compiler:compiler",
+        "org.jetbrains.kotlin.*",
+        "com.google.devtools.ksp"
+      ],
+      "groupName": "Kotlin"
+    },
+    {
+      "matchPackagePatterns": [
+        "androidx.test*"
+      ],
+      "groupName": "androidx.test"
+    },
+    {
+      "matchPackagePatterns": [
+        "com.android.tools",
+        "com.android.test",
+        "com.android.application"
+      ],
+      "groupName": "Android gradle plugin"
+    }
+  ]
+}
