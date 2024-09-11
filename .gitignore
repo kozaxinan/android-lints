@@ -70,3 +70,6 @@ mirror/
 
 gradle/is24.properties
 /checks/lint-report.html
+
+# Kotlin compiler
+.kotlin/
