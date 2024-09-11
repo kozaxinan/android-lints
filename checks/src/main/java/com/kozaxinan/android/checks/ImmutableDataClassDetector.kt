@@ -27,8 +27,6 @@ internal class ImmutableDataClassDetector : Detector(), UastScanner {
     class DataClassVisitor(private val context: JavaContext) : UElementHandler() {
 
         override fun visitClass(node: UClass) {
-//            if (node !is KotlinUClass) return
-
             val containsEqualHashCode = node
                 .methods
                 .map { it.name }
@@ -39,30 +37,50 @@ internal class ImmutableDataClassDetector : Detector(), UastScanner {
                     .allFields
                     .filterIsInstance<KtLightField>()
 
-                checkFields(node, fields)
+                validateDataClassFields(node, fields)
             }
         }
 
-        private fun checkFields(node: UClass, fields: List<KtLightField>) {
-            val nonFinalFieldNames = fields
-                .filterNot { it.hasModifierProperty(PsiModifier.FINAL) }
-                .map { it.name }
-            if (nonFinalFieldNames.isNotEmpty()) {
-                report(node, "$nonFinalFieldNames are var. $nonFinalFieldNames need to be val.")
+        private fun validateDataClassFields(node: UClass, fields: List<KtLightField>) {
+//            val nonFinalFieldNames = fields
+//                .filterNot { it.hasModifierProperty(PsiModifier.FINAL) }
+//                .map { it.name }
+//            if (nonFinalFieldNames.isNotEmpty()) {
+//                report(node, "$nonFinalFieldNames are var. $nonFinalFieldNames need to be val.")
+//            }
+//
+//            val mutableFieldNames = fields
+//                .filter {
+//                    it.text.contains("Mutable") ||
+//                            it.kotlinTypeName()?.contains("Mutable") ?: false
+//                }
+//                .map { it.name }
+//            if (mutableFieldNames.isNotEmpty()) {
+//                report(
+//                    node,
+//                    "Return type of $mutableFieldNames are not immutable. $mutableFieldNames need to be immutable class."
+//                )
+//            }
+
+            val problematicFields = fields.filter { field ->
+                !field.hasModifierProperty(PsiModifier.FINAL) ||
+                        field.text.contains("Mutable") ||
+                        field.kotlinTypeName()?.contains("Mutable") ?: false
             }
 
-            val mutableFieldNames = fields
-                .filter {
-                    it.text.contains("Mutable") ||
-                            it.kotlinTypeName()?.contains("Mutable") ?: false
+            if (problematicFields.isNotEmpty()) {
+                val message = problematicFields.joinToString(separator = "\n") { field ->
+                    if (!field.hasModifierProperty(PsiModifier.FINAL)) {
+                        "${field.name} is a var. It should be a val in a data class."
+                    } else {
+                        "${field.name} has a mutable type. Use an immutable type instead."
+                    }
                 }
-                .map { it.name }
-            if (mutableFieldNames.isNotEmpty()) {
-                report(
-                    node,
-                    "Return type of $mutableFieldNames are not immutable. $mutableFieldNames need to be immutable class."
-                )
+                // Construct a more informative message (see suggestion 3)
+                report(node, message)
             }
+
+
         }
 
         private fun report(node: UClass, message: String) {

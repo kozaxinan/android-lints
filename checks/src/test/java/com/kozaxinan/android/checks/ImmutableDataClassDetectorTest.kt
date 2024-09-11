@@ -64,7 +64,8 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
             .run()
             .expect(
                 """
-              src/foo/Dto.kt:3: Warning: [totalNewResults, name] are var. [totalNewResults, name] need to be val. [ImmutableDataClassRule]
+              src/foo/Dto.kt:3: Warning: totalNewResults is a var. It should be a val in a data class.
+              name is a var. It should be a val in a data class. [ImmutableDataClassRule]
               data class Dto(
                          ~~~
               0 errors, 1 warnings
@@ -91,7 +92,7 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
             .run()
             .expect(
                 """
-              src/foo/Dto.kt:3: Warning: Return type of [list] are not immutable. [list] need to be immutable class. [ImmutableDataClassRule]
+              src/foo/Dto.kt:3: Warning: list has a mutable type. Use an immutable type instead. [ImmutableDataClassRule]
               data class Dto(
                          ~~~
               0 errors, 1 warnings
@@ -138,7 +139,7 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
             .run()
             .expect(
                 """
-              src/foo/Dto.kt:3: Warning: Return type of [map] are not immutable. [map] need to be immutable class. [ImmutableDataClassRule]
+              src/foo/Dto.kt:3: Warning: map has a mutable type. Use an immutable type instead. [ImmutableDataClassRule]
               data class Dto(
                          ~~~
               0 errors, 1 warnings
@@ -229,7 +230,7 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
             .run()
             .expect(
                 """
-              src/foo/Dto.kt:3: Warning: [totalResults] are var. [totalResults] need to be val. [ImmutableDataClassRule]
+              src/foo/Dto.kt:3: Warning: totalResults is a var. It should be a val in a data class. [ImmutableDataClassRule]
               class Dto(var totalResults: Int) {
                     ~~~
               0 errors, 1 warnings
