@@ -1,17 +1,32 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 apply plugin: 'java-library'
 apply plugin: 'kotlin'
 apply plugin: 'com.android.lint'
 
-lintOptions {
+lint {
     htmlReport true
     htmlOutput file("lint-report.html")
     textReport true
     absolutePaths false
     ignoreTestSources true
+    abortOnError true
+    checkReleaseBuilds false
+    warningsAsErrors true
+    checkDependencies true
 }
 
 sourceCompatibility = "17"
 targetCompatibility = "17"
+
+tasks
+        .withType(KotlinCompile)
+        .configureEach {
+            compilerOptions {
+                jvmTarget = JvmTarget.JVM_17
+            }
+        }
 
 dependencies {
 
