@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.uast.UField
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.getContainingUClass
-import org.jetbrains.uast.kotlin.KotlinUClass
 
 /**
  * Check retrotif interface methods return type for immutability.
@@ -25,7 +24,6 @@ internal class NetworkLayerClassImmutabilityDetector : RetrofitReturnTypeDetecto
     class NetworkLayerDtoFieldVisitor(private val context: JavaContext) : Visitor(context) {
 
         override fun visitMethod(node: UMethod) {
-
             val fields = findAllFieldsOf(node)
 
             val nonFinalFields = fields.filterNot { it.hasModifierProperty(PsiModifier.FINAL) }
@@ -37,7 +35,7 @@ internal class NetworkLayerClassImmutabilityDetector : RetrofitReturnTypeDetecto
 
             val nonImmutableFields: List<UField> = fields
                 .filter {
-                    val kotlinUClass = it.getContainingUClass() as? KotlinUClass
+                    val kotlinUClass = it.getContainingUClass()
                     kotlinUClass != null && !kotlinUClass.isEnum
                 }
                 .filter {

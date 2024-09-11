@@ -32,7 +32,7 @@ internal class NetworkLayerClassSerializedNameDetector : RetrofitReturnTypeDetec
                         issue = ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE,
                         scopeClass = node,
                         location = context.getNameLocation(node),
-                        message = "Return type doesn't have @SerializedName annotation for $nonFinalFields fields."
+                        message = "Return type doesn't have `@SerializedName` annotation for $nonFinalFields fields"
                 )
             }
         }
@@ -51,7 +51,7 @@ internal class NetworkLayerClassSerializedNameDetector : RetrofitReturnTypeDetec
         val ISSUE_NETWORK_LAYER_CLASS_SERIALIZED_NAME_RULE: Issue = Issue.create(
                 id = "NetworkLayerClassSerializedNameRule",
                 briefDescription = "SerializedName annotated network layer class",
-                explanation = "Data classes used in network layer should use SerializedName annotation for Gson. Adding annotation prevents obfuscation errors.",
+                explanation = "Data classes used in network layer should use `@SerializedName` annotation for Gson. Adding annotation prevents obfuscation errors.",
                 category = CORRECTNESS,
                 priority = 5,
                 severity = INFORMATIONAL,

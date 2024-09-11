@@ -121,7 +121,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest : LintDetectorTest() 
             .run()
             .expect(
                 """
-              src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [ARVATO] fields. [NetworkLayerClassSerializedNameRule]
+              src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [ARVATO] fields [NetworkLayerClassSerializedNameRule]
                 fun get(): Dto
                     ~~~
               0 errors, 0 warnings
@@ -177,7 +177,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest : LintDetectorTest() 
             .run()
             .expect(
                 """
-              src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [ARVATO] fields. [NetworkLayerClassSerializedNameRule]
+              src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [ARVATO] fields [NetworkLayerClassSerializedNameRule]
                 fun get(): Dto
                     ~~~
               0 errors, 0 warnings
@@ -222,7 +222,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest : LintDetectorTest() 
             .run()
             .expect(
                 """
-            src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
+            src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalNewResults] fields [NetworkLayerClassSerializedNameRule]
               fun get(): Dto
                   ~~~
             0 errors, 0 warnings
@@ -267,7 +267,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest : LintDetectorTest() 
             .run()
             .expect(
                 """
-              src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
+              src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalNewResults] fields [NetworkLayerClassSerializedNameRule]
                 suspend fun get(some:String, iasda: Int): Dto
                             ~~~
               0 errors, 0 warnings
@@ -323,10 +323,10 @@ internal class NetworkLayerClassSerializedNameDetectorTest : LintDetectorTest() 
             .run()
             .expect(
                 """
-            src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalResults, totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
+            src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalResults, totalNewResults] fields [NetworkLayerClassSerializedNameRule]
               fun get(): Dto
                   ~~~
-            src/foo/Api2.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalResults, totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
+            src/foo/Api2.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalResults, totalNewResults] fields [NetworkLayerClassSerializedNameRule]
               fun get2(): Dto
                   ~~~~
             0 errors, 0 warnings
@@ -377,7 +377,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest : LintDetectorTest() 
             .run()
             .expect(
                 """
-            src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalResults, innerDto, innerResults] fields. [NetworkLayerClassSerializedNameRule]
+            src/foo/Api.kt:8: Information: Return type doesn't have @SerializedName annotation for [totalResults, innerDto, innerResults] fields [NetworkLayerClassSerializedNameRule]
               fun get(): Dto
                   ~~~
             0 errors, 0 warnings
@@ -420,7 +420,7 @@ internal class NetworkLayerClassSerializedNameDetectorTest : LintDetectorTest() 
             .run()
             .expect(
                 """
-            src/foo/Api.kt:9: Information: Return type doesn't have @SerializedName annotation for [totalResults, totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
+            src/foo/Api.kt:9: Information: Return type doesn't have @SerializedName annotation for [totalResults, totalNewResults] fields [NetworkLayerClassSerializedNameRule]
               fun get(): Call<List<Dto>>
                   ~~~
             0 errors, 0 warnings
@@ -623,10 +623,10 @@ internal class NetworkLayerClassSerializedNameDetectorTest : LintDetectorTest() 
             .run()
             .expect(
                 """
-            src/foo/Api.java:8: Information: Return type doesn't have @SerializedName annotation for [totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
+            src/foo/Api.java:8: Information: Return type doesn't have @SerializedName annotation for [totalNewResults] fields [NetworkLayerClassSerializedNameRule]
               Dto get();
                   ~~~
-            src/foo/Api.java:11: Information: Return type doesn't have @SerializedName annotation for [totalNewResults] fields. [NetworkLayerClassSerializedNameRule]
+            src/foo/Api.java:11: Information: Return type doesn't have @SerializedName annotation for [totalNewResults] fields [NetworkLayerClassSerializedNameRule]
               Dto get2();
                   ~~~~
             0 errors, 0 warnings

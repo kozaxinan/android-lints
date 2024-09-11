@@ -140,10 +140,10 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
             .run()
             .expect(
                 """
-              src/foo/Api.kt:8: Information: Return type doesn't have @JsonClass annotation for [PremiumType] classes. [NetworkLayerClassJsonClassRule]
+              src/foo/Api.kt:8: Information: Return type doesn't have @JsonClass annotation for [PremiumType] classes [NetworkLayerClassJsonClassRule]
                 fun get(): Dto
                     ~~~
-              src/foo/Api.kt:8: Information: Return type doesn't have @Json annotation for [ARVATO] fields. [NetworkLayerClassJsonRule]
+              src/foo/Api.kt:8: Information: Return type doesn't have @Json annotation for [ARVATO] fields [NetworkLayerClassJsonRule]
                 fun get(): Dto
                     ~~~
               0 errors, 0 warnings
@@ -191,7 +191,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
             .run()
             .expect(
                 """
-            src/foo/Api.kt:8: Information: Return type doesn't have @Json annotation for [totalNewResults] fields. [NetworkLayerClassJsonRule]
+            src/foo/Api.kt:8: Information: Return type doesn't have @Json annotation for [totalNewResults] fields [NetworkLayerClassJsonRule]
               fun get(): Dto
                   ~~~
             0 errors, 0 warnings
@@ -239,7 +239,7 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
             .run()
             .expect(
                 """
-              src/foo/Api.kt:8: Information: Return type doesn't have @Json annotation for [totalNewResults] fields. [NetworkLayerClassJsonRule]
+              src/foo/Api.kt:8: Information: Return type doesn't have @Json annotation for [totalNewResults] fields [NetworkLayerClassJsonRule]
                 suspend fun get(some:String, iasda: Int): Dto
                             ~~~
               0 errors, 0 warnings
@@ -296,16 +296,16 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
             .run()
             .expect(
                 """
-              src/foo/Api.kt:8: Information: Return type doesn't have @JsonClass annotation for [Dto] classes. [NetworkLayerClassJsonClassRule]
+              src/foo/Api.kt:8: Information: Return type doesn't have @JsonClass annotation for [Dto] classes [NetworkLayerClassJsonClassRule]
                 fun get(): Dto
                     ~~~
-              src/foo/Api2.kt:8: Information: Return type doesn't have @JsonClass annotation for [Dto] classes. [NetworkLayerClassJsonClassRule]
+              src/foo/Api2.kt:8: Information: Return type doesn't have @JsonClass annotation for [Dto] classes [NetworkLayerClassJsonClassRule]
                 fun get2(): Dto
                     ~~~~
-              src/foo/Api.kt:8: Information: Return type doesn't have @Json annotation for [totalResults, totalNewResults] fields. [NetworkLayerClassJsonRule]
+              src/foo/Api.kt:8: Information: Return type doesn't have @Json annotation for [totalResults, totalNewResults] fields [NetworkLayerClassJsonRule]
                 fun get(): Dto
                     ~~~
-              src/foo/Api2.kt:8: Information: Return type doesn't have @Json annotation for [totalResults, totalNewResults] fields. [NetworkLayerClassJsonRule]
+              src/foo/Api2.kt:8: Information: Return type doesn't have @Json annotation for [totalResults, totalNewResults] fields [NetworkLayerClassJsonRule]
                 fun get2(): Dto
                     ~~~~
               0 errors, 0 warnings
@@ -364,10 +364,10 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
             .run()
             .expect(
                 """
-              src/foo/Api.kt:8: Information: Return type doesn't have @JsonClass annotation for [InnerDto] classes. [NetworkLayerClassJsonClassRule]
+              src/foo/Api.kt:8: Information: Return type doesn't have @JsonClass annotation for [InnerDto] classes [NetworkLayerClassJsonClassRule]
                 fun get(): Dto
                     ~~~
-              src/foo/Api.kt:8: Information: Return type doesn't have @Json annotation for [innerResults] fields. [NetworkLayerClassJsonRule]
+              src/foo/Api.kt:8: Information: Return type doesn't have @Json annotation for [innerResults] fields [NetworkLayerClassJsonRule]
                 fun get(): Dto
                     ~~~
               0 errors, 0 warnings
@@ -411,10 +411,10 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
             .run()
             .expect(
                 """
-              src/foo/Api.kt:9: Information: Return type doesn't have @JsonClass annotation for [Dto] classes. [NetworkLayerClassJsonClassRule]
+              src/foo/Api.kt:9: Information: Return type doesn't have @JsonClass annotation for [Dto] classes [NetworkLayerClassJsonClassRule]
                 fun get(): Call<List<Dto>>
                     ~~~
-              src/foo/Api.kt:9: Information: Return type doesn't have @Json annotation for [totalResults, totalNewResults] fields. [NetworkLayerClassJsonRule]
+              src/foo/Api.kt:9: Information: Return type doesn't have @Json annotation for [totalResults, totalNewResults] fields [NetworkLayerClassJsonRule]
                 fun get(): Call<List<Dto>>
                     ~~~
               0 errors, 0 warnings
@@ -616,16 +616,16 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
             .run()
             .expect(
                 """
-              src/foo/Api.java:8: Information: Return type doesn't have @JsonClass annotation for [Dto] classes. [NetworkLayerClassJsonClassRule]
+              src/foo/Api.java:8: Information: Return type doesn't have @JsonClass annotation for [Dto] classes [NetworkLayerClassJsonClassRule]
                 Dto get();
                     ~~~
-              src/foo/Api.java:11: Information: Return type doesn't have @JsonClass annotation for [Dto] classes. [NetworkLayerClassJsonClassRule]
+              src/foo/Api.java:11: Information: Return type doesn't have @JsonClass annotation for [Dto] classes [NetworkLayerClassJsonClassRule]
                 Dto get2();
                     ~~~~
-              src/foo/Api.java:8: Information: Return type doesn't have @Json annotation for [totalNewResults] fields. [NetworkLayerClassJsonRule]
+              src/foo/Api.java:8: Information: Return type doesn't have @Json annotation for [totalNewResults] fields [NetworkLayerClassJsonRule]
                 Dto get();
                     ~~~
-              src/foo/Api.java:11: Information: Return type doesn't have @Json annotation for [totalNewResults] fields. [NetworkLayerClassJsonRule]
+              src/foo/Api.java:11: Information: Return type doesn't have @Json annotation for [totalNewResults] fields [NetworkLayerClassJsonRule]
                 Dto get2();
                     ~~~~
               0 errors, 0 warnings

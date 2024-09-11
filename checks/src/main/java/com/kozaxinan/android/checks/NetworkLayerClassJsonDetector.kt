@@ -67,7 +67,7 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
                     issue = ISSUE_NETWORK_LAYER_CLASS_JSON_RULE,
                     scopeClass = node,
                     location = context.getNameLocation(node),
-                    message = "Return type doesn't have @Json annotation for $checkedFields fields."
+                    message = "Return type doesn't have `@Json` annotation for $checkedFields fields"
                 )
             }
 
@@ -78,7 +78,7 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
                     issue = ISSUE_NETWORK_LAYER_CLASS_JSON_CLASS_RULE,
                     scopeClass = node,
                     location = context.getNameLocation(node),
-                    message = "Return type doesn't have @JsonClass annotation for $checkedClasses classes."
+                    message = "Return type doesn't have `@JsonClass` annotation for $checkedClasses classes"
                 )
             }
         }
@@ -115,7 +115,7 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
         val ISSUE_NETWORK_LAYER_CLASS_JSON_CLASS_RULE: Issue = Issue.create(
             id = "NetworkLayerClassJsonClassRule",
             briefDescription = "Json annotated network layer class",
-            explanation = "Data classes used in network layer should use JsonClass annotation for Moshi. Adding annotation prevents obfuscation errors.",
+            explanation = "Data classes used in network layer should use `@JsonClass` annotation for Moshi. Adding annotation prevents obfuscation errors.",
             category = CORRECTNESS,
             priority = 5,
             severity = INFORMATIONAL,
