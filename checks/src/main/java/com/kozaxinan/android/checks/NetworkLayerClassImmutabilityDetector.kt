@@ -39,7 +39,7 @@ internal class NetworkLayerClassImmutabilityDetector : RetrofitReturnTypeDetecto
                     kotlinUClass != null && !kotlinUClass.isEnum
                 }
                 .filter {
-                    it.text.contains("Mutable") ||
+                    it.nameContainsMutable() ||
                             (it.javaPsi as? KtLightMember<PsiMember>)?.kotlinTypeName()
                                 ?.contains("Mutable") ?: false
                 }
@@ -51,6 +51,12 @@ internal class NetworkLayerClassImmutabilityDetector : RetrofitReturnTypeDetecto
                     "Return type contains mutable class types. $fieldsText need to be immutable."
                 )
             }
+        }
+
+        private fun UField.nameContainsMutable(): Boolean = try {
+            text.contains("Mutable")
+        } catch (exception: Exception) {
+            false
         }
 
         private fun report(node: UMethod, message: String) {
