@@ -94,6 +94,40 @@ internal class NetworkLayerClassImmutabilityDetectorTest : LintDetectorTest() {
     }
 
     @Test
+    fun `test kotlin file with typealias`() {
+        lint()
+            .files(
+                retrofit(),
+                rxjava(),
+                kotlin(
+                    """
+                package foo
+                
+                import retrofit2.http.GET
+
+                interface Api {
+                    
+                  @GET("url") 
+                  suspend fun get(
+                    param: SomeType
+                  ): String
+                }
+                """
+                ).indented(),
+                kotlin(
+                    """
+                package foo
+                 
+                typealias SomeType = String
+                    """
+                ).indented()
+            )
+            .issues(ISSUE_NETWORK_LAYER_IMMUTABLE_CLASS_RULE)
+            .run()
+            .expectClean()
+    }
+
+    @Test
     fun `test kotlin file with Completable`() {
         lint()
             .files(
