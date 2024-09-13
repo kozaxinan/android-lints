@@ -51,8 +51,7 @@ internal class ImmutableDataClassDetector : Detector(), UastScanner {
         ) {
             val problematicFields = fields.filter { field: UField ->
                 !field.hasModifierProperty(PsiModifier.FINAL) ||
-                        field.isTypeMutable(evaluator) ||
-                        field.text.contains("Mutable")
+                        field.isTypeMutable(evaluator)
             }
 
             if (problematicFields.isNotEmpty()) {
