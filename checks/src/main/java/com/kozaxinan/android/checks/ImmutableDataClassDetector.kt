@@ -38,6 +38,7 @@ internal class ImmutableDataClassDetector : Detector(), UastScanner {
             if (containsEqualHashCode) {
                 val fields: List<UField> = node
                     .allFields
+                    .filterNot { it.name.contains("$") }
                     .mapNotNull(PsiField::toUElementOfType)
 
                 validateDataClassFields(node, fields, context.evaluator)
