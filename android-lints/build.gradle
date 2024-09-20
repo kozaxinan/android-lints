@@ -6,7 +6,7 @@ group = 'com.kozaxinan.android-lints'
 android {
     namespace = "com.kozaxinan.android.lints"
 
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         minSdkVersion 19
@@ -20,7 +20,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-
 
     publishing {
         singleVariant('release') {

@@ -7,7 +7,6 @@ import com.kozaxinan.android.checks.ImmutableDataClassDetector.Companion.ISSUE_I
 import org.junit.Test
 import java.util.*
 
-
 @Suppress("UnstableApiUsage")
 internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
 
@@ -22,7 +21,7 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
                   data class Dto(
                       val totalResults: Int,
                       val totalNewResults: Int,
-                      private val name: String,
+                      private val name: java.lang.String,
                       val bool: Boolean
                   ) {
                   
@@ -35,6 +34,31 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
                       val EMPTY = Dto(0, 0, "", false)
                     }
                   }
+                """
+                ).indented()
+            )
+            .issues(ISSUE_IMMUTABLE_DATA_CLASS_RULE)
+            .run()
+            .expectClean()
+    }
+
+    @Test
+    fun `test data class with throwables`() {
+        lint()
+            .files(
+                kotlin(
+                    """
+                  package foo
+
+                  import java.lang.IllegalStateException
+                  
+                  data class DtoException(
+                      val totalResults: Int,
+                      val totalNewResults: Int,
+                      private val name: java.lang.String,
+                      val bool: Boolean,
+                      val th: IllegalStateException,
+                  ): java.lang.Throwable(message = name)
                 """
                 ).indented()
             )
