@@ -33,7 +33,14 @@ publishing {
         release(MavenPublication) {
             groupId = "com.github.kozaxinan"
             artifactId = "android-lints"
-
+            pom {
+                licenses {
+                    license {
+                        name = 'Apache License, Version 2.0'
+                        url = 'https://opensource.org/license/apache-2-0'
+                    }
+                }
+            }
             afterEvaluate {
                 from components.release
             }
