@@ -6,13 +6,14 @@ import com.android.tools.lint.checks.infrastructure.TestFile
 import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
+import com.kozaxinan.android.checks.NetworkLayerClassJsonDetector.Companion.ISSUE_NETWORK_LAYER_CLASS_JSON_CLASS_BODY_RULE
 import com.kozaxinan.android.checks.NetworkLayerClassJsonDetector.Companion.ISSUE_NETWORK_LAYER_CLASS_JSON_CLASS_RULE
 import com.kozaxinan.android.checks.NetworkLayerClassJsonDetector.Companion.ISSUE_NETWORK_LAYER_CLASS_JSON_RULE
 import org.junit.Test
 import java.util.*
 
 private val ISSUES_TO_TEST =
-    arrayOf(ISSUE_NETWORK_LAYER_CLASS_JSON_RULE, ISSUE_NETWORK_LAYER_CLASS_JSON_CLASS_RULE)
+    arrayOf(ISSUE_NETWORK_LAYER_CLASS_JSON_RULE, ISSUE_NETWORK_LAYER_CLASS_JSON_CLASS_RULE, ISSUE_NETWORK_LAYER_CLASS_JSON_CLASS_BODY_RULE)
 
 @Suppress("UnstableApiUsage")
 internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
@@ -203,6 +204,161 @@ internal class NetworkLayerClassJsonDetectorTest : LintDetectorTest() {
                     ~~~
               0 errors, 0 warnings
             """
+            )
+    }
+
+    @Test
+    fun `test body with JsonClass`() {
+        lint()
+            .files(
+                retrofit(),
+                jsonAnnotation(),
+                jsonClassAnnotation().indented(),
+                kotlin(
+                    """
+                package foo
+
+                import retrofit2.http.GET
+                import retrofit2.http.Body 
+
+                interface Api {
+                  @GET("url")
+                  fun theApiRequest(@Body theBody: RequestDto): ResponseDto
+                }
+                """
+                ).indented(),
+                kotlin(
+                    """
+                package foo
+
+                import com.squareup.moshi.Json
+                import com.squareup.moshi.JsonClass
+ 
+                @JsonClass(generateAdapter = true)
+                data class RequestDto(
+                    val requestValue: Boolean
+                )
+
+                @JsonClass(generateAdapter = true)
+                data class ResponseDto(
+                    @Json
+                    val responseValue: Boolean
+                )
+                """
+                ).indented()
+            )
+            .issues(*ISSUES_TO_TEST)
+            .testModes(TestMode.DEFAULT)
+            .run()
+            .expect(
+                """
+No warnings.
+            """
+            )
+    }
+
+    @Test
+    fun `test body without JsonClass`() {
+        lint()
+            .files(
+                retrofit(),
+                jsonAnnotation(),
+                jsonClassAnnotation().indented(),
+                kotlin(
+                    """
+                package foo
+
+                import retrofit2.http.GET
+                import retrofit2.http.Body 
+
+                interface Api {
+                  @GET("url")
+                  fun theApiRequest(@Body theBody: RequestDto): ResponseDto
+                }
+                """
+                ).indented(),
+                kotlin(
+                    """
+                package foo
+
+                import com.squareup.moshi.Json
+                import com.squareup.moshi.JsonClass
+ 
+                data class RequestDto(
+                    val requestValue: Boolean
+                )
+
+                @JsonClass(generateAdapter = true)
+                data class ResponseDto(
+                    @Json
+                    val responseValue: Boolean
+                )
+                """
+                ).indented()
+            )
+            .issues(*ISSUES_TO_TEST)
+            .testModes(TestMode.DEFAULT)
+            .run()
+            .expect(
+                """src/foo/Api.kt:8: Information: Body parameter doesn't have @JsonClass annotation for [RequestDto] classes [NetworkLayerBodyClassJsonClassRule]
+  fun theApiRequest(@Body theBody: RequestDto): ResponseDto
+                          ~~~~~~~
+0 errors, 0 warnings"""
+            )
+    }
+
+
+    @Test
+    fun `test body with nested classes without JsonClass`() {
+        lint()
+            .files(
+                retrofit(),
+                jsonAnnotation(),
+                jsonClassAnnotation().indented(),
+                kotlin(
+                    """
+                package foo
+
+                import retrofit2.http.GET
+                import retrofit2.http.Body 
+
+                interface Api {
+                  @GET("url")
+                  fun theApiRequest(@Body theBody: RequestDto): ResponseDto
+                }
+                """
+                ).indented(),
+                kotlin(
+                    """
+                package foo
+
+                import com.squareup.moshi.Json
+                import com.squareup.moshi.JsonClass
+ 
+                data class InnerRequestDto(
+                    val other: Boolean
+                )
+
+                data class RequestDto(
+                    val innerValue: InnerRequestDto
+                )
+
+                @JsonClass(generateAdapter = true)
+                data class ResponseDto(
+                    @Json
+                    val responseValue: Boolean
+                )
+                """
+                ).indented()
+            )
+            .issues(*ISSUES_TO_TEST)
+            .testModes(TestMode.DEFAULT)
+            .run()
+            .expect(
+                """src/foo/Api.kt:8: Information: Body parameter doesn't have @JsonClass annotation for [RequestDto, InnerRequestDto] classes [NetworkLayerBodyClassJsonClassRule]
+  fun theApiRequest(@Body theBody: RequestDto): ResponseDto
+                          ~~~~~~~
+0 errors, 0 warnings"""
             )
     }
 

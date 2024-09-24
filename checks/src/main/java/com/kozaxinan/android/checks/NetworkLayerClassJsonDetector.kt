@@ -7,7 +7,9 @@ import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity.INFORMATIONAL
 import com.intellij.lang.jvm.JvmParameter
+import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiClassType
 import org.jetbrains.uast.UAnnotated
 import org.jetbrains.uast.UField
 import org.jetbrains.uast.UMethod
@@ -22,7 +24,6 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
     override fun createUastHandler(context: JavaContext) = NetworkLayerDtoFieldVisitor(context)
 
     class NetworkLayerDtoFieldVisitor(private val context: JavaContext) : Visitor(context) {
-
         override fun visitMethod(node: UMethod) {
             val allFields: Set<UField> =
                 findAllFieldsOf(node)
@@ -71,7 +72,8 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
                 )
             }
 
-            val checkedClasses = classes.filterNot(::hasJsonClassAnnotation).map { it.name }
+            val checkedClasses =
+                classes.filterNot { hasJsonClassAnnotation(it.annotations) }.map { it.name }
 
             if (checkedClasses.isNotEmpty()) {
                 context.report(
@@ -80,6 +82,27 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
                     location = context.getNameLocation(node),
                     message = "Return type doesn't have `@JsonClass` annotation for $checkedClasses classes"
                 )
+            }
+
+            val bodyParameters = findAllBodyParametersOf(node)
+
+            bodyParameters.forEach { bodyParameter ->
+                val bodyParameterType = bodyParameter.type
+                if (bodyParameterType is PsiClassType) {
+                    val innerFields = findAllInnerFields(bodyParameterType)
+                        .filterNot { !it.isStatic && it.getContainingUClass()?.isEnum == true }
+                        .mapNotNull { it.getContainingUClass() }
+                        .filterNot { hasJsonClassAnnotation(it.annotations) }
+
+                    if (innerFields.isNotEmpty()) {
+                        context.report(
+                            issue = ISSUE_NETWORK_LAYER_CLASS_JSON_CLASS_BODY_RULE,
+                            scopeClass = node,
+                            location = context.getNameLocation(bodyParameter),
+                            message = "Body parameter doesn't have `@JsonClass` annotation for ${innerFields.map { it.name }} classes"
+                        )
+                    }
+                }
             }
         }
 
@@ -91,8 +114,8 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
                 .any { it.endsWith("Json") }
         }
 
-        private fun hasJsonClassAnnotation(clazz: PsiClass): Boolean {
-            return clazz.annotations
+        private fun hasJsonClassAnnotation(annotations: Array<PsiAnnotation>): Boolean {
+            return annotations
                 .mapNotNull { uAnnotation -> uAnnotation.qualifiedName }
                 .any { it.endsWith("JsonClass") }
         }
@@ -114,6 +137,18 @@ internal class NetworkLayerClassJsonDetector : RetrofitReturnTypeDetector() {
         )
         val ISSUE_NETWORK_LAYER_CLASS_JSON_CLASS_RULE: Issue = Issue.create(
             id = "NetworkLayerClassJsonClassRule",
+            briefDescription = "Json annotated network layer class",
+            explanation = "Data classes used in network layer should use `@JsonClass` annotation for Moshi. Adding annotation prevents obfuscation errors.",
+            category = CORRECTNESS,
+            priority = 5,
+            severity = INFORMATIONAL,
+            implementation = Implementation(
+                NetworkLayerClassJsonDetector::class.java,
+                Scope.JAVA_FILE_SCOPE
+            )
+        )
+        val ISSUE_NETWORK_LAYER_CLASS_JSON_CLASS_BODY_RULE: Issue = Issue.create(
+            id = "NetworkLayerBodyClassJsonClassRule",
             briefDescription = "Json annotated network layer class",
             explanation = "Data classes used in network layer should use `@JsonClass` annotation for Moshi. Adding annotation prevents obfuscation errors.",
             category = CORRECTNESS,

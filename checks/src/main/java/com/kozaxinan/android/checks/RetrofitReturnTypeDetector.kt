@@ -4,12 +4,22 @@ import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Detector.UastScanner
 import com.android.tools.lint.detector.api.JavaContext
-import com.intellij.psi.*
+import com.intellij.psi.PsiClassType
+import com.intellij.psi.PsiEnumConstant
+import com.intellij.psi.PsiSubstitutor
+import com.intellij.psi.PsiType
+import com.intellij.psi.PsiWildcardType
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import com.kozaxinan.android.checks.RetrofitReturnTypeDetector.Visitor
 import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.uast.*
+import org.jetbrains.uast.UAnnotated
+import org.jetbrains.uast.UClass
+import org.jetbrains.uast.UField
+import org.jetbrains.uast.UMethod
+import org.jetbrains.uast.UParameter
+import org.jetbrains.uast.getContainingUClass
+import org.jetbrains.uast.toUElement
 
 /**
  * Parent class for finding fields of return type of and Retrofit interface method.
@@ -44,6 +54,11 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
             "PUT"
         )
 
+        private val listOfRetrofitBodyAnnotations = listOf(
+            "retrofit2.http.Body",
+            "Body"
+        )
+
         /**
          * Return all field of return type of a retrofit interface method.
          * Returned list is include recursive fields of complex classes and type information of genetic classes.
@@ -70,10 +85,25 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
             }
         }
 
+        fun findAllBodyParametersOf(node: UMethod): Set<UParameter> {
+            if (node.getContainingUClass()?.isInterface != true || !hasRetrofitAnnotation(node)) return emptySet()
+
+            return node.uastParameters.filter { hasBodyAnnotation(it) }.toSet()
+        }
+
         private fun PsiClassType.isNotUnitOrVoid() =
             !canonicalText.contains("Unit") && !canonicalText.contains("Void")
 
         private fun PsiClassType.isResponseBody() = canonicalText.contains("ResponseBody")
+
+        private fun hasBodyAnnotation(parameter: UParameter): Boolean {
+            return context
+                .evaluator
+                .getAllAnnotations(parameter as UAnnotated, true)
+                .map { uAnnotation -> uAnnotation.qualifiedName }
+                .intersect(listOfRetrofitBodyAnnotations)
+                .isNotEmpty()
+        }
 
         private fun hasRetrofitAnnotation(method: UMethod): Boolean {
             return context
@@ -84,7 +114,10 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
                 .isNotEmpty()
         }
 
-        private fun findAllInnerFields(typeRef: PsiClassType, visitedTypes: MutableSet<PsiClassType> = mutableSetOf()): Set<UField> {
+        internal fun findAllInnerFields(
+            typeRef: PsiClassType,
+            visitedTypes: MutableSet<PsiClassType> = mutableSetOf()
+        ): Set<UField> {
             val actualReturnType = findGenericClassType(typeRef)
             val typeClass = actualReturnType
                 .resolve()
@@ -127,14 +160,17 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
                             psiType.isSuper -> {
                                 findGenericClassType(psiType.superBound as PsiClassType)
                             }
+
                             psiType.isExtends -> {
                                 findGenericClassType(psiType.extendsBound as PsiClassType)
                             }
+
                             else -> {
                                 returnType
                             }
                         }
                     }
+
                     else -> returnType
                 }
             }
