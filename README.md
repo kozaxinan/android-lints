@@ -38,6 +38,14 @@ If you want to use this rule, please configure you lint.xml.
 <issue id="NetworkLayerClassJsonRule" severity="error" />
 ```
 
+
+### NetworkLayerBodyClassJsonClassRule
+Classes used in as body with Moshi should use JsonClass annotation to generate the adaptor class. This lint checks Retrofit interface methods' body param for JsonClass annotation. If you don't use Moshi for Retrofit, this check is useless. That is why it is `infromation` level. 
+
+```
+<issue id="NetworkLayerBodyClassJsonClassRule" severity="error" />
+```
+
 # Usage
 Library is published to jitpack.io. After adding implementation to your module, lint will include new rules. 
 
