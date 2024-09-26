@@ -120,7 +120,7 @@ fun String?.matchesAnyOf(patterns: Sequence<Regex>): Boolean {
 fun hasThrowableSuperClass(uClass: UClass?): Boolean {
     var superClass: PsiClass? = uClass?.javaPsi?.superClass
     while (superClass != null) {
-        if (superClass.qualifiedName == "java.lang.Throwable") {
+        if (superClass.qualifiedName == "java.lang.Throwable" || superClass.qualifiedName == "kotlin.Throwable") {
             return true
         }
         superClass = superClass.superClass
@@ -129,5 +129,6 @@ fun hasThrowableSuperClass(uClass: UClass?): Boolean {
 }
 
 fun isStringClass(uClass: UClass): Boolean {
-    return uClass.qualifiedName == "java.lang.String"
+    return uClass.qualifiedName == "java.lang.String" ||
+            uClass.qualifiedName == "kotlin.String"
 }
