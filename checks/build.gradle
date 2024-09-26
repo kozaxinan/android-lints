@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 apply plugin: 'java-library'
@@ -22,11 +23,15 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+def kgpKotlinVersion = KotlinVersion.KOTLIN_1_9
+
 tasks
         .withType(KotlinCompile)
         .configureEach {
             compilerOptions {
                 jvmTarget = JvmTarget.JVM_17
+                apiVersion.set(kgpKotlinVersion)
+                languageVersion.set(kgpKotlinVersion)
             }
         }
 
