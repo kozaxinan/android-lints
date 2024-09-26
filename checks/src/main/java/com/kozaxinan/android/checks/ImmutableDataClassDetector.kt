@@ -10,10 +10,12 @@ import com.android.tools.lint.detector.api.Issue
 import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiModifier
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UField
+import org.jetbrains.uast.getContainingUClass
 import org.jetbrains.uast.toUElementOfType
 
 /**
@@ -50,10 +52,15 @@ internal class ImmutableDataClassDetector : Detector(), UastScanner {
             fields: List<UField>,
             evaluator: JavaEvaluator,
         ) {
-            val problematicFields = fields.filter { field: UField ->
-                !field.hasModifierProperty(PsiModifier.FINAL) ||
-                        field.isTypeMutable(evaluator)
-            }
+            val problematicFields = fields
+                .filterNot { field: UField ->
+                    hasThrowableSuperClass(field.getContainingUClass())
+                }
+                .filter { field: UField ->
+                    !field
+                        .hasModifierProperty(PsiModifier.FINAL) ||
+                            field.isTypeMutable(evaluator)
+                }
 
             if (problematicFields.isNotEmpty()) {
                 val message = problematicFields.joinToString(separator = "\n") { field ->

@@ -116,14 +116,17 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
 
         internal fun findAllInnerFields(
             typeRef: PsiClassType,
-            visitedTypes: MutableSet<PsiClassType> = mutableSetOf()
+            visitedTypes: MutableSet<PsiClassType> = mutableSetOf(),
         ): Set<UField> {
             val actualReturnType = findGenericClassType(typeRef)
-            val typeClass = actualReturnType
+            val typeClass: UClass = actualReturnType
                 .resolve()
                 .toUElement() as? UClass
                 ?: return emptySet()
 
+            if (hasThrowableSuperClass(typeClass) || isStringClass(typeClass)) {
+                return setOf()
+            }
 
             if (visitedTypes.contains(actualReturnType)) {
                 return setOf()
@@ -137,6 +140,7 @@ internal abstract class RetrofitReturnTypeDetector : Detector(), UastScanner {
 
             return innerFields +
                     innerFields
+                        .asSequence()
                         .filterNot { it.isStatic }
                         .map { it.type }
                         .filterIsInstance<PsiClassType>()

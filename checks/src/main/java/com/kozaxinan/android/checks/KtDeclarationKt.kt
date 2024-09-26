@@ -1,6 +1,7 @@
 package com.kozaxinan.android.checks
 
 import com.android.tools.lint.client.api.JavaEvaluator
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
@@ -114,4 +115,19 @@ fun String?.matchesAnyOf(patterns: Sequence<Regex>): Boolean {
         if (matches(regex)) return true
     }
     return false
+}
+
+fun hasThrowableSuperClass(uClass: UClass?): Boolean {
+    var superClass: PsiClass? = uClass?.javaPsi?.superClass
+    while (superClass != null) {
+        if (superClass.qualifiedName == "java.lang.Throwable") {
+            return true
+        }
+        superClass = superClass.superClass
+    }
+    return false
+}
+
+fun isStringClass(uClass: UClass): Boolean {
+    return uClass.qualifiedName == "java.lang.String"
 }
