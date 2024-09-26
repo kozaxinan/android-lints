@@ -5,7 +5,6 @@ import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
 import com.kozaxinan.android.checks.ImmutableDataClassDetector.Companion.ISSUE_IMMUTABLE_DATA_CLASS_RULE
 import org.junit.Test
-import java.util.*
 
 @Suppress("UnstableApiUsage")
 internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
@@ -50,17 +49,40 @@ internal class ImmutableDataClassDetectorTest : LintDetectorTest() {
                     """
                   package foo
 
-                  import java.lang.IllegalStateException
+                  import java.lang.Exception
+                  import java.lang.Throwable
                   
                   data class DtoException(
                       val totalResults: Int,
-                      val totalNewResults: Int,
-                      private val name: java.lang.String,
                       val bool: Boolean,
-                      val th: IllegalStateException,
-                  ): java.lang.Throwable(message = name)
+                      val th: Throwable,
+                  ): Exception(message = name)
                 """
-                ).indented()
+                ).indented(),
+                java(throwable),
+                java(exception),
+            )
+            .issues(ISSUE_IMMUTABLE_DATA_CLASS_RULE)
+            .run()
+            .expectClean()
+    }
+
+    @Test
+    fun `test data class with String`() {
+        lint()
+            .files(
+                kotlin(
+                    """
+                  package foo
+
+                  import java.lang.String
+                  
+                  data class Dto(
+                      val someString: String,
+                  )
+                """
+                ).indented(),
+                java(string),
             )
             .issues(ISSUE_IMMUTABLE_DATA_CLASS_RULE)
             .run()

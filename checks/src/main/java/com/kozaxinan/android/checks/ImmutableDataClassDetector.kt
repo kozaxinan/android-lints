@@ -10,12 +10,11 @@ import com.android.tools.lint.detector.api.Issue
 import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
-import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiModifier
 import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UField
-import org.jetbrains.uast.getContainingUClass
 import org.jetbrains.uast.toUElementOfType
 
 /**
@@ -40,8 +39,16 @@ internal class ImmutableDataClassDetector : Detector(), UastScanner {
             if (containsEqualHashCode) {
                 val fields: List<UField> = node
                     .allFields
+                    .flatMap {
+                        if (it.type is PsiClassType) {
+                            findAllInnerFields(it.type as PsiClassType) + it
+                        } else {
+                            listOf(it)
+                        }
+                    }
                     .filterNot { it.name.contains("$") }
-                    .mapNotNull(PsiField::toUElementOfType)
+                    .mapNotNull<PsiField, UField>(PsiField::toUElementOfType)
+                    .filterNot(UField::hasSuperClassWithNonFinalValue)
 
                 validateDataClassFields(node, fields, context.evaluator)
             }
@@ -53,9 +60,6 @@ internal class ImmutableDataClassDetector : Detector(), UastScanner {
             evaluator: JavaEvaluator,
         ) {
             val problematicFields = fields
-                .filterNot { field: UField ->
-                    hasThrowableSuperClass(field.getContainingUClass())
-                }
                 .filter { field: UField ->
                     !field
                         .hasModifierProperty(PsiModifier.FINAL) ||
