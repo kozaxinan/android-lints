@@ -40,13 +40,13 @@ dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    compileOnly "com.android.tools.lint:lint-api:31.8.1"
-    compileOnly "com.android.tools.lint:lint-checks:31.8.1"
+    compileOnly "com.android.tools.lint:lint-api:31.12.1"
+    compileOnly "com.android.tools.lint:lint-checks:31.12.1"
 
     testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    testImplementation "com.android.tools.lint:lint:31.8.0"
-    testImplementation "com.android.tools.lint:lint-tests:31.8.1"
+    testImplementation "com.android.tools.lint:lint:31.12.1"
+    testImplementation "com.android.tools.lint:lint-tests:31.12.1"
     testImplementation "junit:junit:4.13.2"
     testImplementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }
