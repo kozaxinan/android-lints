@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
 
-    ext.kotlin_version = "2.1.10"
+    ext.kotlin_version = "2.2.10"
 
     repositories {
         google()
@@ -21,6 +21,6 @@ tasks.register('clean', Delete) {
 }
 
 wrapper {
-    gradleVersion = '8.14.3'
+    gradleVersion = '9.0.0'
     distributionType = Wrapper.DistributionType.BIN
 }
