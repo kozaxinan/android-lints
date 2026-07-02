@@ -51,6 +51,16 @@ Library is published to jitpack.io. After adding implementation to your module, 
 
 [![](https://jitpack.io/v/kozaxinan/android-lints.svg)](https://jitpack.io/#kozaxinan/android-lints)
 
+### Releases
+For a list of changes in each release, see the [GitHub Releases](https://github.com/kozaxinan/android-lints/releases).
+
+### Release Process
+To release a new version:
+1. Update the version in `build.gradle` if necessary.
+2. Commit and push the changes.
+3. Create a new tag on GitHub (e.g., `v1.0.0`).
+4. JitPack will automatically build and publish the new version.
+
 ```
 allprojects {
     repositories {
