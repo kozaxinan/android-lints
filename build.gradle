@@ -21,6 +21,6 @@ tasks.register('clean', Delete) {
 }
 
 wrapper {
-    gradleVersion = '9.0.0'
+    gradleVersion = '9.6.1'
     distributionType = Wrapper.DistributionType.BIN
 }
